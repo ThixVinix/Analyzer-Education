@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+<link rel="shortcut icon" href="#">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<link rel="stylesheet" th:href="@{/static/css/editor-styles.css}">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<meta charset="UTF-8">
+<title>ACE in Action</title>
+<style type="text/css" media="screen">
+#editor {
+	height: 600px;
+}
+</style>
+</head>
+
+<body style="background-color: teal;">
+
+	<form th:object="${codeEditorDTO}" class="card-body"
+		action="/home/novo" method="POST">
+		<div class="container">
+			<div class="row">
+				<input id="code" th:field="*{entrada}" type="hidden" name="usercode"
+					style="display: none;">
+				<div id="editor"
+					class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12"
+					style="margin-bottom: 20px; margin-top: 10px"></div>
+
+			</div>
+		</div>
+		<div class="row justify-content-md-center">
+
+			<div class="col-md-auto">
+				<button id="executar" class="btn btn-dark"
+					type="submit" formmethod="post">Execute</button>
+				<button class="btn btn-secondary" type="button">Clear</button>
+			</div>
+			<div class="col-md-auto">
+				<textarea th:field="*{saida}" class="form-control" cols="100%" rows="10" readonly="true">
+			</textarea>
+			</div>
+		</div>
+	</form>
+
+	<script th:src="@{/static/js/ace.js}" type="text/javascript"
+		charset="utf-8"></script>
+	<script th:src="@{/static/js/ext-language_tools.js}"
+		type="text/javascript" charset="utf-8"></script>
+	<script th:src="@{/static/js/mode-java.js}"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"></script>
+
+	<!-- Custom Scripts -->
+	<script th:src="@{/static/js/editor.js}" type="text/javascript"
+		charset="utf-8"></script>
+	<script th:src="@{/static/js/editor-console.js}" type="text/javascript"
+		charset="utf-8"></script>
+
+
+</body>
+</html>
