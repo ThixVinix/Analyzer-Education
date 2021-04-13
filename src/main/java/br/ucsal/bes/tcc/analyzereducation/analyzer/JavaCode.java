@@ -5,12 +5,20 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import br.ucsal.bes.tcc.analyzereducation.abstracts.AbstractArquivoMetrica;
 import br.ucsal.bes.tcc.analyzereducation.enums.ValidacaoArquivoEnum;
+import br.ucsal.bes.tcc.analyzereducation.model.ArquivoMetrica;
 import br.ucsal.bes.tcc.analyzereducation.util.Constante;
 import br.ucsal.bes.tcc.analyzereducation.util.DirectoryUtil;
 import br.ucsal.bes.tcc.analyzereducation.util.Util;
@@ -20,17 +28,20 @@ public class JavaCode extends AbstractArquivoMetrica {
 	private static final Logger LOGGER = LogManager.getLogger(JavaCode.class.getName());
 
 	private static final String MESSAGE_STARTED_ANALYZE = "Iniciando análise das métricas do arquivo: \"%s\"...";
-	
+
 	private static final String DIRETORIO_NOME_ARQUIVO = "C:\\Users\\Public\\Documents\\DefaultName";
+
+	private static final String DIRETORIO = "C:\\Users\\Public\\Documents";
 
 	private File fileJava;
 
+	private Map<ArquivoMetrica, Boolean> filesJava;
 
 	public JavaCode() {
 		super();
+		setFilesJava(new HashMap<>());
 	}
 
-	
 	public ValidacaoArquivoEnum validarDiretorio(String diretorioString) {
 		LOGGER.info("Validando campo do diretório...");
 
@@ -72,12 +83,12 @@ public class JavaCode extends AbstractArquivoMetrica {
 			LOGGER.info(Constante.PREENCHIMENTO_OBRIGATORIO_CLASSE_DEUS);
 			return ValidacaoArquivoEnum.PREENCHIMENTO_OBRIGATORIO_CLASSE_DEUS;
 		}
-		
+
 		if (!Util.isNumerico(qtdMinMetodoDeusString.trim())) {
 			LOGGER.info(Constante.PREENCHIMENTO_INCORRETO_METODO_DEUS);
 			return ValidacaoArquivoEnum.PREENCHIMENTO_INCORRETO_METODO_DEUS;
 		}
-		
+
 		if (!Util.isNumerico(qtdMinClasseDeusString.trim())) {
 			LOGGER.info(Constante.PREENCHIMENTO_INCORRETO_CLASSE_DEUS);
 			return ValidacaoArquivoEnum.PREENCHIMENTO_INCORRETO_CLASSE_DEUS;
@@ -86,9 +97,11 @@ public class JavaCode extends AbstractArquivoMetrica {
 		LOGGER.info("Validação das entidades deusas efetuada com sucesso.");
 		return ValidacaoArquivoEnum.SUCESSO;
 	}
-	
+
 	public void iniciarAnalise(File arquivo, Integer limiteMinMetodoDeus, Integer limiteMinClasseDeus)
 			throws IOException {
+
+		this.setArquivoPesquisado(new ArquivoMetrica());
 
 		if (Util.isNullOrEmpty(limiteMinMetodoDeus) || limiteMinMetodoDeus < Constante.NUMBER_ZERO_INT)
 			limiteMinMetodoDeus = Constante.NUMBER_ZERO_INT;
@@ -109,12 +122,12 @@ public class JavaCode extends AbstractArquivoMetrica {
 			salvarMetricas();
 			return;
 		}
-		
+
 		String line;
 
 		String message = String.format(MESSAGE_STARTED_ANALYZE, arquivo.getName());
 		LOGGER.info(message);
-		
+
 		while ((line = arquivoReader.readLine()) != null) {
 			analisarLinhaAtual(line, arquivo);
 		}
@@ -134,66 +147,154 @@ public class JavaCode extends AbstractArquivoMetrica {
 
 		resetarMetricasProvisorias();
 	}
-	
+
 	public String executarCodigo(String conteudo) {
-		
-			setFileJava(criarArquivoGenericoJava());
-			
-		   DirectoryUtil.adicionarConteudoArquivo(getFileJava(), conteudo);
-		
+
+		setFileJava(DirectoryUtil.criarArquivoComExtensao(DIRETORIO_NOME_ARQUIVO, Constante.ARQUIVO_TIPO_JAVA));
+
+		DirectoryUtil.adicionarConteudoArquivo(getFileJava(), conteudo);
+
+		// PASTA ATUAL
+//		System.out.println(FileSystems.getDefault().getPath("").toAbsolutePath().toString());
+
+		StringBuilder output = new StringBuilder();
 		try {
 			iniciarAnalise(getFileJava(), Constante.QTD_MIN_LINHAS_METODO_DEUS, Constante.QTD_MIN_LINHAS_CLASSE_DEUS);
-		} catch (IOException e) {
-			LOGGER.catching(e);
-		}
-		
-		String output = "";
-		
-		output = executeCommand(getAbsolutePath());
-		
-		return output;
-	}
+			acessarArquivosAnalisados();
 
+			ArquivoMetrica arquivoPrincipal = null;
 
-	private File criarArquivoGenericoJava() {
-		int count = Constante.NUMBER_ZERO_INT;
-		File f = new File(DIRETORIO_NOME_ARQUIVO + Constante.ARQUIVO_TIPO_JAVA);
-		
-		while (f.exists() && !f.isDirectory()) {
-			f = new File(DIRETORIO_NOME_ARQUIVO + (++count) + Constante.ARQUIVO_TIPO_JAVA);
-		}
-		
-		return DirectoryUtil.criarArquivo(f.getAbsolutePath());
-	}
-	
-	public String executeCommand(String command) {
+			arquivoPrincipal = obterArquivoPrincipal();
 
-		StringBuffer output = new StringBuffer();
-
-		Process p;
-		try {
-			p = Runtime.getRuntime().exec(command);
-			p.waitFor();
-			BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-
-			String line = "";
-			while ((line = reader.readLine()) != null) {
-				output.append(line + "\n");
+			if (arquivoPrincipal != null) {
+				String nomeArquivo = arquivoPrincipal.obterNomeArquivo();
+				// Estagio 1 - Compilar
+				output.append(executar(DIRETORIO, "javac", nomeArquivo));
+				// Estagio 2 - Executar
+				output.append(executar(DIRETORIO, "java", nomeArquivo));
+			} else {
+				LOGGER.warn("Não foi possível executar o código");
 			}
 
-		} catch (Exception e) {
-			output.append(e.getCause());
+		} catch (IOException e) {
+			LOGGER.catching(e.getCause());
+			output.append(e.getMessage() + Constante.QUEBRA_LINHA);
 		}
 
 		return output.toString();
-
 	}
 
+	private ArquivoMetrica obterArquivoPrincipal() {
+		ArquivoMetrica arquivoPrincipal = null;
 
+		for (Map.Entry<ArquivoMetrica, Boolean> file : filesJava.entrySet()) {
+			boolean isMain = file.getValue();
+			if (isMain) {
+				arquivoPrincipal = file.getKey();
+				break;
+			}
+		}
+		return arquivoPrincipal;
+	}
+
+	private void acessarArquivosAnalisados() {
+		for (Map.Entry<ArquivoMetrica, File> mapArquivoAlvo : arquivosAnalisados.entrySet()) {
+			if ((mapArquivoAlvo.getKey().getArquivo() != null && mapArquivoAlvo.getKey().getArquivo().exists())) {
+				if (!mapArquivoAlvo.getValue().exists()) {
+					renomearArquivoAlvo(mapArquivoAlvo);
+				} else {
+					String message = String.format(Constante.ARQUIVO_EXISTENTE, mapArquivoAlvo.getValue());
+					LOGGER.warn(message);
+					DirectoryUtil.deletarArquivo(mapArquivoAlvo.getValue().toPath());
+					renomearArquivoAlvo(mapArquivoAlvo);
+				}
+
+				mapArquivoAlvo.getKey().setCaminho(mapArquivoAlvo.getValue().toPath());
+				mapArquivoAlvo.getKey().setArquivo(mapArquivoAlvo.getValue());
+			}
+
+			verificarArquivosPrincipais(mapArquivoAlvo);
+		}
+	}
+
+	private void renomearArquivoAlvo(Map.Entry<ArquivoMetrica, File> mapArquivoAlvo) {
+		String resultado = DirectoryUtil.renomearArquivo(mapArquivoAlvo.getKey().getArquivo(),
+				mapArquivoAlvo.getValue());
+		LOGGER.info(resultado);
+	}
+
+	private void verificarArquivosPrincipais(Entry<ArquivoMetrica, File> mapArquivoAlvo) {
+
+		boolean contemMetodoMain = false;
+		String conteudo = mapArquivoAlvo.getKey().getConteudoCompactado();
+		StringTokenizer st = new StringTokenizer(conteudo, Constante.QUEBRA_LINHA);
+		while (st.hasMoreTokens()) {
+			String line = st.nextToken();
+			contemMetodoMain = verificarMetodoMain(line);
+			if (contemMetodoMain) {
+				filesJava.put(getArquivoPesquisado(), true);
+				break;
+			}
+		}
+
+		if (!contemMetodoMain) {
+			filesJava.put(getArquivoPesquisado(), false);
+		}
+	}
+
+	private boolean verificarMetodoMain(String line) {
+
+		try {
+			Pattern padrao = Pattern.compile(Constante.REGEX_METODO_MAIN);
+			Matcher encontrador = padrao.matcher(line.trim());
+			while (encontrador.find()) {
+				return true;
+			}
+
+		} catch (PatternSyntaxException e) {
+			LOGGER.catching(e);
+		}
+
+		return false;
+	}
+
+	public static String executar(String path, String comando, String arquivo) throws IOException {
+		// System.out.println("Executando comando:");
+		StringBuilder sb = new StringBuilder();
+
+		ProcessBuilder builder = new ProcessBuilder(comando, arquivo);
+		/// path + "arquivos" = path/arquivos
+		builder.directory(new File(path));
+		Process process = builder.start();
+		BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+		BufferedReader error = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+
+		String line;
+		while ((line = reader.readLine()) != null) {
+			// System.out.println(line);
+			sb.append(line + Constante.QUEBRA_LINHA);
+		}
+
+		while ((line = error.readLine()) != null) {
+			// System.out.println(line);
+			sb.append(line + Constante.QUEBRA_LINHA);
+		}
+
+		// int exitCode = process.waitFor();
+		// System.out.println("\nExited with error code : " + exitCode);
+
+		if (Util.isNullOrEmpty(sb)) {
+			return Constante.VAZIO;
+		} else {
+			return sb.toString();
+		}
+
+	}
+	
 	public File getFileJava() {
 		return fileJava;
 	}
-
 
 	public void setFileJava(File fileJava) {
 		this.fileJava = fileJava;
@@ -201,19 +302,26 @@ public class JavaCode extends AbstractArquivoMetrica {
 
 	public String getAbsolutePath() {
 		if (Util.isNotNullOrEmpty(getArquivoPesquisado().getArquivo().getAbsoluteFile())) {
-		return getArquivoPesquisado().getArquivo().getAbsolutePath();
+			return getArquivoPesquisado().getArquivo().getAbsolutePath();
 		} else {
-		return getFileJava().getAbsolutePath();
-		}
-	}
-	
-	public String getFileName() {
-		if (Util.isNotNullOrEmpty(getArquivoPesquisado().getArquivo().getAbsoluteFile())) {
-		return getArquivoPesquisado().getArquivo().getName();
-		} else {
-		return getFileJava().getName();
+			return getFileJava().getAbsolutePath();
 		}
 	}
 
+	public String getFileName() {
+		if (Util.isNotNullOrEmpty(getArquivoPesquisado().getArquivo().getAbsoluteFile())) {
+			return getArquivoPesquisado().getArquivo().getName();
+		} else {
+			return getFileJava().getName();
+		}
+	}
+
+	public Map<ArquivoMetrica, Boolean> getFilesJava() {
+		return filesJava;
+	}
+
+	public void setFilesJava(Map<ArquivoMetrica, Boolean> filesJava) {
+		this.filesJava = filesJava;
+	}
 
 }

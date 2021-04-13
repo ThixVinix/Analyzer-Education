@@ -3,7 +3,9 @@ package br.ucsal.bes.tcc.analyzereducation.abstracts;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,6 +25,7 @@ public abstract class AbstractArquivoMetrica {
 
 	private ArquivoMetrica arquivoPesquisado;
 
+	protected Map<ArquivoMetrica, File> arquivosAnalisados;
 	protected Long qtdLinhasDeCodigo;
 	protected Long qtdClasses;
 	protected Long qtdMetodos;
@@ -44,6 +47,8 @@ public abstract class AbstractArquivoMetrica {
 		this.qtdMetodoDeus = Constante.NUMBER_ZERO_LONG;
 		this.qtdClasseDeus = Constante.NUMBER_ZERO_LONG;
 
+		this.arquivosAnalisados = new HashMap<>();
+
 		setArquivoPesquisado(new ArquivoMetrica());
 		getArquivoPesquisado().setQtdLoc(Constante.NUMBER_ZERO_LONG);
 		getArquivoPesquisado().setQtdClasseDeus(Constante.NUMBER_ZERO_LONG);
@@ -51,6 +56,7 @@ public abstract class AbstractArquivoMetrica {
 		getArquivoPesquisado().setQtdComentarios(Constante.NUMBER_ZERO_LONG);
 		getArquivoPesquisado().setQtdClasseDeus(Constante.NUMBER_ZERO_LONG);
 		getArquivoPesquisado().setQtdMetodoDeus(Constante.NUMBER_ZERO_LONG);
+		getArquivoPesquisado().setMainMethod(false);
 
 		conteudoCompleto = new StringBuilder();
 		conteudoCompactado = new StringBuilder();
@@ -177,7 +183,7 @@ public abstract class AbstractArquivoMetrica {
 			Matcher encontrador = padrao.matcher(line);
 			while (encontrador.find()) {
 				if (!line.trim().contains(Constante.ABSTRACT) || !line.trim().endsWith(Constante.PONTO_VIRGULA)) {
-					System.out.println(line);
+				//	System.out.println(line);
 					qtdMetodos++;
 				}
 			}
@@ -194,7 +200,7 @@ public abstract class AbstractArquivoMetrica {
 			while (encontrador.find()) {
 
 				if (qtdClasses.equals(Constante.NUMBER_ZERO_LONG)) {
-					renomearNomeArquivoAnalisado(linha, file);
+					mapearArquivoAnalisado(linha, file);
 				}
 
 				qtdClasses++;
@@ -205,32 +211,31 @@ public abstract class AbstractArquivoMetrica {
 		}
 	}
 
-	private void renomearNomeArquivoAnalisado(String linha, File file) {
+	private void mapearArquivoAnalisado(String linha, File file) {
+		File diretorio;
+		String nomeArquivo;
+		String extensao;
+
 		if (linha.contains("class")) {
-			File diretorio = file.getParentFile();
-			String nomeArquivo = Util.buscarPalavraPorIndex(linha, (linha.indexOf("class") + 6));
-			String extensao = file.getName().substring(file.getName().lastIndexOf("."), file.getName().length());
-			if (!file.renameTo(new File(diretorio, nomeArquivo + extensao))) {
-				LOGGER.warn(Constante.RENOMEACAO_NAO_REALIZADA);
-			}
+			diretorio = file.getParentFile();
+			nomeArquivo = Util.buscarPalavraPorIndex(linha, (linha.indexOf("class") + 6));
+			extensao = file.getName().substring(file.getName().lastIndexOf(Constante.PONTO), file.getName().length());
 			salvarDiretorioAndArquivo(file.toPath(), file);
+			arquivosAnalisados.put(arquivoPesquisado, new File(diretorio, nomeArquivo + extensao));
 
 		} else if (linha.contains("interface")) {
-			String extensao = file.getName().substring(file.getName().lastIndexOf("."), file.getName().length());
-			String nomeArquivo = Util.buscarPalavraPorIndex(linha, (linha.indexOf("interface") + 10));
-			if (!file.renameTo(new File(file.getParentFile(), nomeArquivo + extensao))) {
-				LOGGER.warn(Constante.RENOMEACAO_NAO_REALIZADA);
-			}
+			diretorio = file.getParentFile();
+			nomeArquivo = Util.buscarPalavraPorIndex(linha, (linha.indexOf("interface") + 10));
+			extensao = file.getName().substring(file.getName().lastIndexOf(Constante.PONTO), file.getName().length());
 			salvarDiretorioAndArquivo(file.toPath(), file);
+			arquivosAnalisados.put(arquivoPesquisado, new File(diretorio, nomeArquivo + extensao));
 
 		} else if (linha.contains("enum")) {
-			String extensao = file.getName().substring(file.getName().lastIndexOf("."), file.getName().length());
-			String nomeArquivo = Util.buscarPalavraPorIndex(linha, (linha.indexOf("enum") + 5));
-			if (!file.renameTo(new File(file.getParentFile(), nomeArquivo + extensao))) {
-				LOGGER.warn(Constante.RENOMEACAO_NAO_REALIZADA);
-			}
+			diretorio = file.getParentFile();
+			nomeArquivo = Util.buscarPalavraPorIndex(linha, (linha.indexOf("enum") + 5));
+			extensao = file.getName().substring(file.getName().lastIndexOf(Constante.PONTO), file.getName().length());
 			salvarDiretorioAndArquivo(file.toPath(), file);
-
+			arquivosAnalisados.put(arquivoPesquisado, new File(diretorio, nomeArquivo + extensao));
 		}
 	}
 

@@ -12,7 +12,8 @@ public class Constante {
 	public static final String REGEX_LINHA = ".*(\\S)";
 	public static final String REGEX_METODO = "^(\\s|)+((([^\\sreturn])[\\w\\<\\>\\[\\]]+[\\s]+[\\w]+)|([\\w]+[\\s]+[\\w\\<\\>\\[\\]]+[\\s]+[\\w]+)|([\\w]+[\\s]+[\\w]+[\\s]+[\\w\\<\\>\\[\\]]+[\\s]+[\\w]+)|([\\w]+[\\s]+[\\w]+[\\s]+[\\w]+[\\s]+[\\w\\<\\>\\[\\]]+[\\s]+[\\w]+))(\\s|)+\\((?:\\s*(?:const\\s+)?([\\S]+?)\\s+([\\w\\d]+?)\\s*,?)*?\\)(\\s|)+((throws)(\\s)+([\\w,\\s]{1,})|)(\\s|)+(\\{|\\;|)(\\s|)+$";
 	public static final String REGEX_CLASSE = "(public\\s+|private\\s+)?(static\\s+)?(abstract\\s+)?(final\\s+)?class\\s+([\\w_$]+)(\\s*<[\\w,\\s]*>)?(\\s+extends\\s([\\w\\.\\_\\$]+))?(\\s+implements\\s([\\w\\.\\_\\$\\,\\s]+))?\\s*(\\{|)";
-
+	public static final String REGEX_METODO_MAIN = "(\\s|)+(public)(\\s)+(static)(\\s)+(void)(\\s)+(main)(\\s|)+(\\()(\\s|)+(String)(\\s|)+(\\[\\])(\\s)+(args)(\\s|)+(\\))(\\s|)+(\\s|)+(\\w||\\s|,)+(\\{|)(\\s|)";
+	
 	public static final Integer QTD_MIN_LINHAS_METODO_DEUS = 200;
 	public static final Integer QTD_MIN_LINHAS_CLASSE_DEUS = 1000;
 	public static final Long NUMBER_ZERO_LONG = 0L;
@@ -27,6 +28,7 @@ public class Constante {
 	public static final String COMENTARIO_MULTI_LINHA_3 = "*/";
 	public static final String ABRE_CHAVES = "{";
 	public static final String FECHA_CHAVES = "}";
+	public static final String PONTO = ".";
 	public static final String PONTO_VIRGULA = ";";
 	public static final String VAZIO = "";
 	public static final String QUEBRA_LINHA = "\n";
@@ -120,6 +122,8 @@ public class Constante {
 
 	/** Warn Messages */
 	
-	public static final String RENOMEACAO_NAO_REALIZADA = "Não foi possível renomear o nome do arquivo.";
+	public static final String RENOMEACAO_NAO_REALIZADA = "Não foi possível renomear arquivo \"%s\" para \"%s\".";
+	public static final String ARQUIVO_RENOMEADO = "Arquivo \"%s\" renomeado para : \"%s\"";
+	public static final String ARQUIVO_EXISTENTE = "O arquivo \"%s\" já existe. Não é possível conter mais de um arquivo com o mesmo nome no mesmo diretório.";
 }
 

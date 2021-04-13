@@ -10,11 +10,14 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.StringTokenizer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -84,6 +87,23 @@ public class DirectoryUtil {
 
 		return file;
 	}
+	
+	public static File criarArquivoComExtensao(String nomeArquivo, String extensao) {
+		int count = Constante.NUMBER_ZERO_INT;
+		
+		if (extensao.contains(Constante.PONTO)) {
+			extensao = extensao.replace(Constante.PONTO, Constante.VAZIO);
+		}
+		
+		File f = new File(nomeArquivo + Constante.PONTO + extensao);
+
+		while (f.exists() && !f.isDirectory()) {
+			f = new File(nomeArquivo + (++count) + Constante.PONTO + extensao);
+		}
+		
+		return f;
+		
+	}
 
 	public static void adicionarConteudoArquivo(File file, String conteudo) {
 		FileWriter fileWritter = null;
@@ -141,6 +161,8 @@ public class DirectoryUtil {
 
 		return listFiles;
 	}
+	
+
 
 	/**
 	 * Retorna um diretório(path) através de um diretório(String).
@@ -286,7 +308,7 @@ public class DirectoryUtil {
 				fileOutputStream.close();
 				fileOutputStream = null;
 			} catch (IOException e1) {
-			LOGGER.catching(e1);
+				LOGGER.catching(e1);
 			}
 		}
 	}
@@ -307,6 +329,46 @@ public class DirectoryUtil {
 		} catch (Exception e) {
 			return 0;
 		}
+	}
+
+	public static String renomearArquivo(File oldFile, File newFile) {
+		String message;
+		if (oldFile != null && newFile != null) {
+
+			if (!oldFile.renameTo(newFile)) {
+				message = String.format(Constante.RENOMEACAO_NAO_REALIZADA, oldFile.getAbsoluteFile(),
+						newFile.getAbsoluteFile());
+				return message;
+			} else {
+				message = String.format(Constante.ARQUIVO_RENOMEADO, oldFile.getAbsoluteFile(),
+						newFile.getAbsoluteFile());
+				return message;
+			}
+
+		} else {
+			message = "Não é possível renomear arquivos nulos";
+			return message;
+		}
+	}
+	
+	public static String lerConteudoArquivoNovo(File file) {
+		
+		StringBuilder sb = new StringBuilder();
+		
+	       Path path = Paths.get(file.getAbsolutePath());
+
+	        List<String> linhasArquivo;
+			try {
+				linhasArquivo = Files.readAllLines(path);
+			
+	        for (String linha : linhasArquivo) {
+	           sb.append(linha + Constante.QUEBRA_LINHA);
+	        }
+	        
+			} catch (IOException e) {
+				LOGGER.catching(e);
+			}
+		return sb.toString();
 	}
 
 }

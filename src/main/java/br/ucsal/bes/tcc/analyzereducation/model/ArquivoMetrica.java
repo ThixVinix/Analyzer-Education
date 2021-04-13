@@ -18,6 +18,7 @@ public class ArquivoMetrica implements Serializable, Comparable<ArquivoMetrica> 
 	private Long qtdComentarios;
 	private Long qtdMetodoDeus;
 	private Long qtdClasseDeus;
+	private boolean mainMethod;
 	
 	public String obterNomeArquivo() {
 		if (getArquivo() != null) {
@@ -226,5 +227,15 @@ public class ArquivoMetrica implements Serializable, Comparable<ArquivoMetrica> 
 	public int compareTo(ArquivoMetrica o) {
 		return 1;
 	}
+
+	public boolean containsMainMethod() {
+		return mainMethod;
+	}
+
+
+	public void setMainMethod(boolean mainMethod) {
+		this.mainMethod = mainMethod;
+	}
+
 
 }
