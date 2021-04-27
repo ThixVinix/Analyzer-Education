@@ -1,4 +1,5 @@
 var input = document.getElementById("code");
+var actualCodeInput;
 
 // Retrieve Elements
 const consoleLogList = document.querySelector('.editor__console-logs');
@@ -7,7 +8,7 @@ const resetCodeBtn = document.querySelector('.editor__reset');
 
 // Setup Ace
 let codeEditor = ace.edit("editor");
-let defaultCode = 'public class Main {\n\npublic static void main(String[] args) {\n	  System.out.println("Hello World");\n	 }\n\n}';
+//let defaultCode = 'public class Main {\n\npublic static void main(String[] args) {\n	  System.out.println("Hello World");\n	 }\n\n}';
 let consoleMessages = [];
 
 let editorLib = {
@@ -50,9 +51,9 @@ let editorLib = {
         });
 
         // Set Default Code
-        codeEditor.setValue(defaultCode);
+    //    codeEditor.setValue(defaultCode);
 
-  
+  		codeEditor.setValue(input.value);
 
 		codeEditor.getSession().on("change", function () {
 		input.value = codeEditor.getSession().getValue();
@@ -63,5 +64,18 @@ let editorLib = {
 
 }
 
+function limpar() {
+	codeEditor.setValue('');
+}
+
+function obter_codigo_padrao() {
+	let defaultCode = 'public class ClassName {\n\npublic static void main(String[] args) {\n	  System.out.println("Hello World");\n	 }\n\n}';
+	codeEditor.setValue(defaultCode);
+}
+
+function recuperar_codigo() {
+	codeEditor.setValue(input.value);
+	console.log(input.value);
+}
 
 editorLib.init();

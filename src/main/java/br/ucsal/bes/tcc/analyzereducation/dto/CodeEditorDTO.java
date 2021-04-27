@@ -1,14 +1,20 @@
 package br.ucsal.bes.tcc.analyzereducation.dto;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 
+import br.ucsal.bes.tcc.analyzereducation.model.ArquivoMetrica;
 import br.ucsal.bes.tcc.analyzereducation.model.CodeEditor;
+import br.ucsal.bes.tcc.analyzereducation.model.Teste;
 import br.ucsal.bes.tcc.analyzereducation.util.Util;
 
 public class CodeEditorDTO {
 
+	private Long id;
+	 
 	private String autor;
 
 	private String nomeArquivo;
@@ -21,7 +27,30 @@ public class CodeEditorDTO {
 	private LocalDate dataCriacao;
 
 	private LocalDate dataAlteracao;
+		
+	private List<String> saidasTesteObtidas;
+	
+	private List<String> saidasTesteEsperadas;
+	
+	private List<Boolean> resultadosTestes;
+	
+	private List<Boolean> resultadosFiltros;
+	
+	private List<Teste> testes;
+	
+	private String titulo;
+	
+	private String descricao;
+	
+	private ArquivoMetrica arquivoMetrica; 
 
+	public CodeEditorDTO() {
+		setSaidasTesteObtidas(new ArrayList<>());
+		setSaidasTesteEsperadas(new ArrayList<>());
+		setResultadosTestes(new ArrayList<>());
+		setResultadosFiltros(new ArrayList<>());
+	}
+	
 	public String getAutor() {
 		return autor;
 	}
@@ -69,6 +98,46 @@ public class CodeEditorDTO {
 	public void setDataAlteracao(LocalDate dataAlteracao) {
 		this.dataAlteracao = dataAlteracao;
 	}
+	
+	public List<String> getSaidasTesteObtidas() {
+		return saidasTesteObtidas;
+	}
+
+	public void setSaidasTesteObtidas(List<String> saidasTesteObtidas) {
+		this.saidasTesteObtidas = saidasTesteObtidas;
+	}
+
+	public List<Boolean> getResultadosTestes() {
+		return resultadosTestes;
+	}
+
+	public void setResultadosTestes(List<Boolean> resultadosTestes) {
+		this.resultadosTestes = resultadosTestes;
+	}
+
+	public List<Boolean> getResultadosFiltros() {
+		return resultadosFiltros;
+	}
+
+	public void setResultadosFiltros(List<Boolean> resultadosFiltros) {
+		this.resultadosFiltros = resultadosFiltros;
+	}
+
+	public ArquivoMetrica getArquivoMetrica() {
+		return arquivoMetrica;
+	}
+
+	public void setArquivoMetrica(ArquivoMetrica arquivoMetrica) {
+		this.arquivoMetrica = arquivoMetrica;
+	}
+
+	public List<String> getSaidasTesteEsperadas() {
+		return saidasTesteEsperadas;
+	}
+
+	public void setSaidasTesteEsperadas(List<String> saidasTesteEsperadas) {
+		this.saidasTesteEsperadas = saidasTesteEsperadas;
+	}
 
 	public CodeEditor toCodeEditor() {
 		CodeEditor codeEditor = new CodeEditor();
@@ -87,6 +156,38 @@ public class CodeEditorDTO {
 			codeEditor.setDataAlteracao(this.getDataAlteracao());
 
 		return codeEditor;
+	}
+
+	public List<Teste> getTestes() {
+		return testes;
+	}
+
+	public void setTestes(List<Teste> testes) {
+		this.testes = testes;
+	}
+
+	public String getTitulo() {
+		return titulo;
+	}
+
+	public void setTitulo(String titulo) {
+		this.titulo = titulo;
+	}
+
+	public String getDescricao() {
+		return descricao;
+	}
+
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 }
