@@ -8,8 +8,6 @@ public class Teste {
 
 	private String saidas;
 	
-	private String output;
-
 	public Long getId() {
 		return id;
 	}
@@ -34,12 +32,6 @@ public class Teste {
 		this.saidas = saidas;
 	}
 
-	public String getOutput() {
-		return output;
-	}
 
-	public void setOutput(String output) {
-		this.output = output;
-	}
 
 }

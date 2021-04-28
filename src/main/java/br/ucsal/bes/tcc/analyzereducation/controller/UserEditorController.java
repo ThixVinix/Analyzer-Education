@@ -1,6 +1,8 @@
 package br.ucsal.bes.tcc.analyzereducation.controller;
 
+import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 
 import javax.validation.Valid;
 
@@ -14,12 +16,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import br.ucsal.bes.tcc.analyzereducation.analyzer.JavaCode;
 import br.ucsal.bes.tcc.analyzereducation.dto.CodeEditorDTO;
+import br.ucsal.bes.tcc.analyzereducation.model.ArquivoMetrica;
 import br.ucsal.bes.tcc.analyzereducation.model.Autor;
 import br.ucsal.bes.tcc.analyzereducation.model.Resultado;
+import br.ucsal.bes.tcc.analyzereducation.model.ResultadoTeste;
 import br.ucsal.bes.tcc.analyzereducation.model.Tarefa;
+import br.ucsal.bes.tcc.analyzereducation.model.Teste;
 import br.ucsal.bes.tcc.analyzereducation.repository.CodeEditorRepository;
 import br.ucsal.bes.tcc.analyzereducation.util.BancoDeDados;
 import br.ucsal.bes.tcc.analyzereducation.util.Constante;
+import br.ucsal.bes.tcc.analyzereducation.util.Util;
 
 @Controller
 @RequestMapping("home")
@@ -55,18 +61,49 @@ public class UserEditorController {
 		Tarefa tarefa = BancoDeDados.obterTarefa(codeEditorDto.getId());
 
 		JavaCode javaCode = new JavaCode();
-		Resultado resultado = new Resultado();
+		Resultado resultado;
 		resultado = javaCode.executarCodigo(codeEditorDto.getEntrada(), tarefa);
 
 		StringBuilder sb = new StringBuilder();
-		int i = 1;
-		for (String saida : resultado.getSaidasObtidas()) {
-			String str = "Resultado da execução #" + i + ":";
+//		int i = 1;
+//		for (String saida : resultado.getSaidasObtidas()) {
+//
+//			i++;
+//		}
+		
+		int j = 1;
+		for (int i = 0; i < resultado.getSaidasObtidas().size(); i++) {
+			String str = "-----------------------------------------------------------------------------------Resultado da execução #" + j + ":-----------------------------------------------------------------------------------";
+			String saida = resultado.getSaidasObtidas().get(i);
+		//	boolean isCorrect = resultado.getResultadosTestes().get(i);
 			sb.append(str + Constante.QUEBRA_LINHA);
 			sb.append(saida + Constante.QUEBRA_LINHA);
 			codeEditorDto.getSaidasTesteObtidas().add(saida);
-			i++;
+		//	codeEditorDto.getResultadosTestes().add(isCorrect);
+			j++;
 		}
+		
+		double totalTestes = 0;
+		double qtdTestesCorretos = 0;
+		for (Map.Entry<Teste, ResultadoTeste> rTest : resultado.getMapResultTest().entrySet()) {
+			codeEditorDto.getMapResultTest().put(rTest.getKey(), rTest.getValue());
+			boolean isCorrect = rTest.getValue().getCorrect();
+			if (isCorrect) {
+				qtdTestesCorretos += 1;
+			}
+			totalTestes += 1;
+		}
+		
+		if (totalTestes > 0) {
+		double percentualConclusao = (qtdTestesCorretos / totalTestes);
+		Double porcentagemAcerto = percentualConclusao * 100;
+		codeEditorDto.setPercentualAcerto(porcentagemAcerto.intValue());
+		} else {
+			codeEditorDto.setPercentualAcerto(null);
+		}
+
+		
+	
 
 		codeEditorDto.setId(tarefa.getId());
 		codeEditorDto.setTestes(tarefa.getTestes());

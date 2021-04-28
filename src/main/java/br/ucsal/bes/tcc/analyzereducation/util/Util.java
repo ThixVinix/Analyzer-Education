@@ -397,5 +397,5 @@ public class Util {
 		}
 		return pParametro.trim().toLowerCase();
 	}
-	
+
 }

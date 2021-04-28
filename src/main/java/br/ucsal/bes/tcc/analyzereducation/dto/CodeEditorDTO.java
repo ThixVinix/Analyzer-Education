@@ -2,12 +2,15 @@ package br.ucsal.bes.tcc.analyzereducation.dto;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.constraints.NotBlank;
 
 import br.ucsal.bes.tcc.analyzereducation.model.ArquivoMetrica;
 import br.ucsal.bes.tcc.analyzereducation.model.CodeEditor;
+import br.ucsal.bes.tcc.analyzereducation.model.ResultadoTeste;
 import br.ucsal.bes.tcc.analyzereducation.model.Teste;
 import br.ucsal.bes.tcc.analyzereducation.util.Util;
 
@@ -38,6 +41,10 @@ public class CodeEditorDTO {
 	
 	private List<Teste> testes;
 	
+	private Map<Teste, ResultadoTeste> mapResultTest;
+	
+	private Integer percentualAcerto;
+	
 	private String titulo;
 	
 	private String descricao;
@@ -49,6 +56,7 @@ public class CodeEditorDTO {
 		setSaidasTesteEsperadas(new ArrayList<>());
 		setResultadosTestes(new ArrayList<>());
 		setResultadosFiltros(new ArrayList<>());
+		setMapResultTest(new HashMap<>());
 	}
 	
 	public String getAutor() {
@@ -188,6 +196,22 @@ public class CodeEditorDTO {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Map<Teste, ResultadoTeste> getMapResultTest() {
+		return mapResultTest;
+	}
+
+	public void setMapResultTest(Map<Teste, ResultadoTeste> mapResultTest) {
+		this.mapResultTest = mapResultTest;
+	}
+
+	public Integer getPercentualAcerto() {
+		return percentualAcerto;
+	}
+
+	public void setPercentualAcerto(Integer percentualAcerto) {
+		this.percentualAcerto = percentualAcerto;
 	}
 
 }

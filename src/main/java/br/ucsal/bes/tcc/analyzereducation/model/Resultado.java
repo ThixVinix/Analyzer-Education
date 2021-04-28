@@ -1,7 +1,9 @@
 package br.ucsal.bes.tcc.analyzereducation.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Resultado {
 
@@ -11,12 +13,16 @@ public class Resultado {
 	
 	private List<Boolean> resultadosFiltros;
 	
-	private ArquivoMetrica arquivoMetrica;
+	private List<ArquivoMetrica> arquivosMetrica;
+	
+	private Map<Teste, ResultadoTeste> mapResultTest;
 
 	public Resultado() {
 		setSaidasObtidas(new ArrayList<>());
 		setResultadosTestes(new ArrayList<>());
 		setResultadosFiltros(new ArrayList<>());
+		setArquivosMetrica(new ArrayList<>());
+		setMapResultTest(new HashMap<>());
 	}
 
 	public List<String> getSaidasObtidas() {
@@ -43,16 +49,20 @@ public class Resultado {
 		this.resultadosFiltros = resultadosFiltros;
 	}
 
-	public ArquivoMetrica getArquivoMetrica() {
-		return arquivoMetrica;
+	public List<ArquivoMetrica> getArquivosMetrica() {
+		return arquivosMetrica;
 	}
 
-	public void setArquivoMetrica(ArquivoMetrica arquivoMetrica) {
-		this.arquivoMetrica = arquivoMetrica;
+	public void setArquivosMetrica(List<ArquivoMetrica> arquivosMetrica) {
+		this.arquivosMetrica = arquivosMetrica;
 	}
 
+	public Map<Teste, ResultadoTeste> getMapResultTest() {
+		return mapResultTest;
+	}
 
-
-	
+	public void setMapResultTest(Map<Teste, ResultadoTeste> mapResultTest) {
+		this.mapResultTest = mapResultTest;
+	}
 	
 }
