@@ -8,6 +8,7 @@
 <link rel="stylesheet" th:href="@{/static/css/editor-styles.css}">
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	
 <meta charset="UTF-8">
 <title>CodeTask</title>
 <style type="text/css" media="screen">
@@ -17,7 +18,7 @@
 </style>
 </head>
 
-<body style="background-color: teal;">
+<body style="background-color: rgb(0, 128, 192);">
 
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark navbar">
 		<div class="container-fluid">
@@ -40,18 +41,21 @@
 		</div>
 	</nav>
 
-	<div class="container" style="padding-top: 20px; margin-bottom: 0px ">
+	<div class="container" style="padding-top: 20px; margin-bottom: 0px">
 		<div class="card text-white bg-dark mb-3">
-			<div class="card-header">
+			<div class="card-header bg-gradient">
 				<h5 class="card-title text-center" th:text="${codeEditorDTO.titulo}"></h5>
 			</div>
 			<div class="card-body">
-				<p class="card-text text-center" th:text="${codeEditorDTO.descricao}"></p>
+				<p class="card-text text-center"
+					th:text="${codeEditorDTO.descricao}"></p>
 			</div>
 		</div>
 	</div>
-
-
+<div class="container">
+	<th:block th:include="home/mensagemValidacao">
+	</th:block>
+</div>
 	<form th:object="${codeEditorDTO}" class="card-body"
 		th:action="@{/home/novo}" method="post">
 
@@ -70,173 +74,446 @@
 		<div class="row justify-content-md-center">
 
 			<div class="col-md-auto">
-				<button id="executar" class="btn btn-dark" type="submit">Execute</button>
-				<button class="btn btn-light" type="button" onclick="limpar();">Clear</button>
+				<button id="executar" class="btn btn-dark bg-gradient" type="submit">Execute</button>
+				<button class="btn btn-light bg-gradient" type="button"
+					onclick="limpar();">Clear</button>
 
-				<button class="btn btn-secondary" type="button"
+				<button class="btn btn-secondary bg-gradient" type="button"
 					onclick="obter_codigo_padrao();">Use Template Default</button>
 			</div>
-			
+
 		</div>
-			<div class="container">
-		<div class="col-md-auto" style="padding-top: 20px">
-				<textarea th:field="*{saida}" class="form-control" cols="100%"
-					rows="10" readonly="true">
+
+		<div class="container" style="padding-top: 20px; margin-bottom: 0px">
+			<div class="card text-white bg-dark mb-3">
+				<div class="card-header bg-gradient">
+					<h5 class="card-title text-center">
+						<span th:text="'Console'"> </span>
+					</h5>
+				</div>
+				<div class="card-body">
+					<div class="col-md-auto">
+						<textarea th:field="*{saida}" class="form-control" cols="100%"
+							rows="10" th:readonly="true">
 			</textarea>
-	</div>
-</div>
-		<div th:if="*{percentualAcerto} != null">
-			<div class="container" style="padding-top: 20px">
-				<div
-					class="progress progress-bar-striped progress-bar-animated bg-danger">
-					<!--   <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: 75%;" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">75%</div>  -->
-					<div
-						class="progress-bar progress-bar-striped progress-bar-animated bg-success"
-						role="progressbar"
-						th:style="'width: ' + *{percentualAcerto} + '%'"
-						th:attr="aria-valuenow=*{percentualAcerto}" aria-valuemin="0"
-						aria-valuemax="100"><span th:text="*{percentualAcerto} + '%'"> </span>  </div>
+					</div>
+
 				</div>
 			</div>
 		</div>
 
+		<div th:if="*{arquivoMetrica} != null">
+			<div class="container" style="padding-top: 5px; margin-bottom: 0px">
+				<ul class="list-group ">
 
-		<div class="container" style="padding-top: 20px">
-			<div class="row ">
+					<li
+						class="bg-gradient bg-dark text-white  list-group-item d-flex justify-content-between align-items-center">
+						<h5 class=" text-center">
+							<span th:text="'Informações adicionais:'"></span>
+						</h5>
+					</li>
+					<li
+						class=" bg-dark text-white list-group-item d-flex justify-content-between align-items-center">
+						<span th:text="'Quantidade de linhas de código utilizadas:'"></span>
+						<span class="badge bg-gradient bg-warning text-dark rounded-pill"
+						th:text="*{arquivoMetrica.qtdLoc}"></span>
+					</li>
+					<li
+						class=" bg-dark text-white list-group-item d-flex justify-content-between align-items-center">
+						<span th:text="'Quantidade de métodos utilizados:'"></span> <span
+						class="badge bg-gradient bg-warning text-dark rounded-pill"
+						th:text="*{arquivoMetrica.qtdMetodos}"></span>
+					</li>
+					<li
+						class=" bg-dark text-white list-group-item d-flex justify-content-between align-items-center">
+						<span th:text="'Quantidade de classes utilizadas:'"></span> <span
+						class="badge bg-gradient bg-warning text-dark rounded-pill"
+						th:text="*{arquivoMetrica.qtdClasses}"></span>
+					</li>
+					<li
+						class=" bg-dark text-white list-group-item d-flex justify-content-between align-items-center">
+						<span th:text="'Quantidade de linhas de comentários utilizados:'"></span>
+						<span class="badge bg-gradient bg-warning text-dark rounded-pill"
+						th:text="*{arquivoMetrica.qtdComentarios}"></span>
+					</li>
+					<li
+						class=" bg-dark text-white list-group-item d-flex justify-content-between align-items-center">
+						<span>Quantidade de "Métodos Deuses" encontrados:</span> <span
+						class="badge bg-gradient bg-warning text-dark rounded-pill"
+						th:text="*{arquivoMetrica.qtdMetodoDeus}"></span>
+					</li>
+					<li
+						class=" bg-dark text-white list-group-item d-flex justify-content-between align-items-center">
+						<span>Quantidade de "Classes Deusas" encontradas:</span> <span
+						class="badge bg-gradient bg-warning text-dark rounded-pill"
+						th:text="*{arquivoMetrica.qtdClasseDeus}"></span>
+					</li>
+				</ul>
+			</div>
+		</div>
 
-				<th:block th:each="teste : ${codeEditorDTO.mapResultTest}">
-					<div class="accordion accordion-flush" id="accordionFlushExample">
+		<div th:if="*{percentualAcerto} != null">
 
-						<div th:id="${teste.key.id}" class="accordion-item bg-light">
-
-							<div class="accordion-item">
-								<div th:if="${teste.value.correct} == true">
-									<h2 class="accordion-header" id="flush-headingOne">
-										<button class="accordion-button collapsed" type="button"
-											data-bs-toggle="collapse"
-											th:attr="data-bs-target='#flush-'+${teste.key.id},aria-controls='flush-'+${teste.key.id}"
-											aria-expanded="false">
-											<span class="col-1" th:text="Teste + ' #' + ${teste.key.id}"></span>
-											<span class="badge rounded-pill bg-gradient bg-success col-1">Success</span>
-										</button>
-
-									</h2>
+			<div class="container" style="padding-top: 20px; margin-bottom: 0px">
+				<div class="card text-white bg-dark mb-3">
+					<div class="card-header bg-gradient">
+						<h5 class="card-title text-center">
+							<span th:text="'Taxa de acurácia do(s) teste(s):'"> </span>
+						</h5>
+					</div>
+					<div class="card-body">
+						<div th:if="*{percentualAcerto} > 0">
+							<div
+								class="h-auto progress progress-bar-striped progress-bar-animated bg-danger">
+								<div
+									class="progress-bar progress-bar-striped progress-bar-animated bg-success"
+									role="progressbar"
+									th:style="'width: ' + *{percentualAcerto} + '%'"
+									th:attr="aria-valuenow=*{percentualAcerto}" aria-valuemin="0"
+									aria-valuemax="100">
+									<span class="fw-bold fst-italic fs-6"
+										th:text="*{percentualAcerto} + '%'"> </span>
 								</div>
-								<div th:if="${teste.value.correct} == false">
-									<h2 class="accordion-header" id="flush-headingOne">
-										<button class="accordion-button collapsed" type="button"
-											data-bs-toggle="collapse"
-											th:attr="data-bs-target='#flush-'+${teste.key.id},aria-controls='flush-'+${teste.key.id}"
-											aria-expanded="false">
+							</div>
+						</div>
+						<div th:if="*{percentualAcerto} == 0">
+							<div
+								class="h-auto progress progress-bar-striped progress-bar-animated bg-danger">
+								<span class="fw-bold fst-italic fs-6 text-center col-12"
+									th:text="'0%'"> </span>
+							</div>
+						</div>
 
-											<span class="col-1" th:text="Teste + ' #' + ${teste.key.id}"></span>
-											<span class="badge rounded-pill bg-gradient bg-danger col-1">Fail</span>
-										</button>
+						<div class="container" style="padding-top: 20px">
+							<div class="row ">
 
-									</h2>
-								</div>
+								<th:block th:each="teste : ${codeEditorDTO.mapResultTest}">
+									<div class="accordion accordion-flush"
+										id="accordionFlushExample">
 
-								<div th:id="'flush-'+${teste.key.id}"
-									class="accordion-collapse collapse"
-									aria-labelledby="flush-headingOne"
-									data-bs-parent="#accordionFlushExample">
+										<div th:id="${teste.key.id}" class="accordion-item bg-light">
 
-									<div th:if="${teste.value.correct} == true">
-										<div class="accordion-body bg-success" th:id="${teste.key.id}">
-											<div class="container">
-												<div class="row">
+											<div class="accordion-item">
+												<div th:if="${teste.value.correct} == true">
+													<h2 class="accordion-header" id="flush-headingOne">
+														<button class="accordion-button collapsed" type="button"
+															data-bs-toggle="collapse"
+															th:attr="data-bs-target='#flush-'+${teste.key.id},aria-controls='flush-'+${teste.key.id}"
+															aria-expanded="false">
+															<span class="col-1"
+																th:text="Teste + ' #' + ${teste.key.id}"></span> <span
+																class="badge rounded-pill bg-gradient bg-success col-1">Success</span>
+														</button>
 
-													<div class="col-md-4 ">
-														<p
-															class="text-white border border-1 bg-gradient bg-dark text-center">Entrada(s)
-															utilizada(s):</p>
-													</div>
-													<div class="col-md-4 ">
-														<p
-															class="text-white border border-1 bg-gradient bg-dark text-center">Saída(s)
-															obtida(s):</p>
-													</div>
-													<div class="col-md-4 ">
-														<p
-															class="text-white border border-1 bg-gradient bg-dark text-center">Saída(s)
-															esperada(s):</p>
-													</div>
+													</h2>
 												</div>
-												<div class="row">
+												<div th:if="${teste.value.correct} == false">
+													<h2 class="accordion-header" id="flush-headingOne">
+														<button class="accordion-button collapsed" type="button"
+															data-bs-toggle="collapse"
+															th:attr="data-bs-target='#flush-'+${teste.key.id},aria-controls='flush-'+${teste.key.id}"
+															aria-expanded="false">
 
-													<div class="col-md-4 ">
+															<span class="col-1"
+																th:text="Teste + ' #' + ${teste.key.id}"></span> <span
+																class="badge rounded-pill bg-gradient bg-danger col-1">Fail</span>
+														</button>
 
-														<textarea class="form-control" cols="100%" readonly="true"
-															th:text="${teste.key.entradas}" rows="7">  </textarea>
+													</h2>
+												</div>
+
+												<div th:id="'flush-'+${teste.key.id}"
+													class="accordion-collapse collapse"
+													aria-labelledby="flush-headingOne"
+													data-bs-parent="#accordionFlushExample">
+
+													<div th:if="${teste.value.correct} == true">
+														<div class="accordion-body bg-gradient bg-success"
+															th:id="${teste.key.id}">
+															<div class="container">
+																<div class="row">
+
+																	<div class="col-md-4 ">
+																		<p
+																			class="text-white border border-1 bg-gradient bg-dark text-center">Entrada(s)
+																			utilizada(s):</p>
+																	</div>
+																	<div class="col-md-4 ">
+																		<p
+																			class="text-white border border-1 bg-gradient bg-dark text-center">Saída(s)
+																			obtida(s):</p>
+																	</div>
+																	<div class="col-md-4 ">
+																		<p
+																			class="text-white border border-1 bg-gradient bg-dark text-center">Saída(s)
+																			esperada(s):</p>
+																	</div>
+																</div>
+																<div class="row">
+
+																	<div class="col-md-4 ">
+
+																		<textarea class="form-control" cols="100%"
+																			th:readonly="true" th:text="${teste.key.entradas}"
+																			rows="7">  </textarea>
+																	</div>
+																	<div class="col-md-4 ">
+
+																		<textarea class="form-control" cols="100%"
+																			th:readonly="true"
+																			th:text="${teste.value.saidaObtida}" rows="7">  </textarea>
+																	</div>
+																	<div class="col-md-4 ">
+
+
+																		<textarea class="form-control" cols="100%"
+																			th:readonly="true" th:text="${teste.key.saidas}"
+																			rows="7">  </textarea>
+																	</div>
+																</div>
+
+																<div class="row justify-content-md-center">
+
+																	<div class="col-md-auto" style="padding-top: 15px">
+																		<!-- Button trigger modal -->
+																		<button type="button" class="btn btn-dark bg-gradient"
+																			data-bs-toggle="modal"
+																			th:attr="data-bs-target='#staticBackdrop' + ${teste.key.id}">Expandir
+																			Visualização</button>
+																	</div>
+																	<!-- Modal -->
+																	<div class="modal fade"
+																		th:id="'staticBackdrop' + ${teste.key.id}"
+																		data-bs-backdrop="static" data-bs-keyboard="false"
+																		tabindex="-1"
+																		th:attr="aria-labelledby='staticBackdropLabel' + ${teste.key.id}"
+																		aria-hidden="true">
+																		<!-- Vertically centered scrollable modal -->
+																		<div
+																			class="modal-dialog modal-fullscreen modal-dialog-centered modal-dialog-scrollable">
+																			<div class="modal-content">
+																				<div class="modal-header bg-gradient bg-dark">
+																					<h5 class="modal-title col-2"
+																						th:id="'staticBackdropLabel' + ${teste.key.id}">Visualização
+																						expandida</h5>
+																					<span
+																						class="badge rounded-pill bg-gradient bg-success me-md-1">Success</span>
+																					<button type="button" class="btn-close bg-white"
+																						data-bs-dismiss="modal" aria-label="Close"></button>
+																				</div>
+																				<div
+																					class="modal-body text-dark bg-gradient bg-success">
+																					<div class="row">
+																						<div class="col-md-12">
+																							<p
+																								class="text-white border border-1 bg-gradient bg-dark text-center">Entrada(s)
+																								utilizada(s):</p>
+																						</div>
+																					</div>
+																					<div class="row" style="padding-bottom: 20px">
+																						<div class="col-md-12 ">
+																							<textarea class="form-control" cols="100%"
+																								th:readonly="true"
+																								th:text="${teste.key.entradas}" rows="8">  </textarea>
+																						</div>
+																					</div>
+																					<div class="row">
+																						<div class="col-md-12 ">
+																							<p
+																								class="text-white border border-1 bg-gradient bg-dark text-center">Saída(s)
+																								obtida(s):</p>
+																						</div>
+																					</div>
+																					<div class="row" style="padding-bottom: 20px">
+																						<div class="col-md-12 ">
+
+																							<textarea class="form-control" cols="100%"
+																								th:readonly="true"
+																								th:text="${teste.value.saidaObtida}" rows="8">  </textarea>
+																						</div>
+																					</div>
+																					<div class="row">
+																						<div class="col-md-12 ">
+																							<p
+																								class="text-white border border-1 bg-gradient bg-dark text-center">Saída(s)
+																								esperada(s):</p>
+																						</div>
+																					</div>
+																					<div class="row" style="padding-bottom: 20px">
+																						<div class="col-md-12 ">
+																							<textarea class="form-control" cols="100%"
+																								th:readonly="true" th:text="${teste.key.saidas}"
+																								rows="8">  </textarea>
+																						</div>
+																					</div>
+																				</div>
+																				<div
+																					class="modal-footer bg-gradient bg-dark row justify-content-md-center">
+																					<div class="col-auto ">
+																						<button type="button"
+																							class="btn bg-gradient btn-secondary"
+																							data-bs-dismiss="modal" th:text="Fechar"></button>
+																					</div>
+																				</div>
+																			</div>
+																		</div>
+																	</div>
+
+																</div>
+
+															</div>
+														</div>
 													</div>
-													<div class="col-md-4 ">
+													<div th:if="${teste.value.correct} == false">
+														<div class="accordion-body bg-gradient bg-danger"
+															th:id="${teste.key.id}">
+															<div class="container">
+																<div class="row">
 
-														<textarea class="form-control" cols="100%" readonly="true"
-															th:text="${teste.value.saidaObtida}" rows="7">  </textarea>
-													</div>
-													<div class="col-md-4 ">
+																	<div class="col-md-4 ">
+																		<p
+																			class="text-white border border-1 bg-gradient bg-dark text-center">Entrada(s)
+																			utilizada(s):</p>
+																	</div>
+																	<div class="col-md-4 ">
+																		<p
+																			class="text-white border border-1 bg-gradient bg-dark text-center">Saída(s)
+																			obtida(s):</p>
+																	</div>
+																	<div class="col-md-4 ">
+																		<p
+																			class="text-white border border-1 bg-gradient bg-dark text-center">Saída(s)
+																			esperada(s):</p>
+																	</div>
+																</div>
+																<div class="row">
+
+																	<div class="col-md-4 ">
+
+																		<textarea class="form-control" cols="100%"
+																			th:readonly="true" th:text="${teste.key.entradas}"
+																			rows="7">  </textarea>
+
+																	</div>
+																	<div class="col-md-4 ">
+
+																		<textarea class="form-control" cols="100%"
+																			th:readonly="true"
+																			th:text="${teste.value.saidaObtida}" rows="7">  </textarea>
+																	</div>
+																	<div class="col-md-4 ">
 
 
-														<textarea class="form-control" cols="100%" readonly="true"
-															th:text="${teste.key.saidas}" rows="7">  </textarea>
+																		<textarea class="form-control" cols="100%"
+																			th:readonly="true" th:text="${teste.key.saidas}"
+																			rows="7">  </textarea>
+																	</div>
+																</div>
+																<div class="row justify-content-md-center">
+
+																	<div class="col-md-auto" style="padding-top: 15px">
+																		<!-- Button trigger modal -->
+																		<button type="button" class="btn btn-dark bg-gradient"
+																			data-bs-toggle="modal"
+																			th:attr="data-bs-target='#staticBackdrop' + ${teste.key.id}">Expandir
+																			Visualização</button>
+																	</div>
+																	<!-- Modal -->
+																	<div class="modal fade"
+																		th:id="'staticBackdrop' + ${teste.key.id}"
+																		data-bs-backdrop="static" data-bs-keyboard="false"
+																		tabindex="-1"
+																		th:attr="aria-labelledby='staticBackdropLabel' + ${teste.key.id}"
+																		aria-hidden="true">
+																		<!-- Vertically centered scrollable modal -->
+																		<div
+																			class="modal-dialog modal-fullscreen modal-dialog-centered modal-dialog-scrollable">
+																			<div class="modal-content">
+																				<div class="modal-header bg-gradient bg-dark">
+																					<h5 class="modal-title col-2"
+																						th:id="'staticBackdropLabel' + ${teste.key.id}">Visualização
+																						expandida</h5>
+																					<span
+																						class="badge rounded-pill bg-gradient bg-danger me-md-1">Fail</span>
+																					<button type="button" class="btn-close bg-white"
+																						data-bs-dismiss="modal" aria-label="Close"></button>
+																				</div>
+																				<div
+																					class="modal-body text-dark bg-gradient bg-danger">
+																					<div class="row">
+																						<div class="col-md-12">
+																							<p
+																								class="text-white border border-1 bg-gradient bg-dark text-center">Entrada(s)
+																								utilizada(s):</p>
+																						</div>
+																					</div>
+																					<div class="row" style="padding-bottom: 20px">
+																						<div class="col-md-12 ">
+																							<textarea class="form-control" cols="100%"
+																								th:readonly="true"
+																								th:text="${teste.key.entradas}" rows="8">  </textarea>
+																						</div>
+																					</div>
+																					<div class="row">
+																						<div class="col-md-12 ">
+																							<p
+																								class="text-white border border-1 bg-gradient bg-dark text-center">Saída(s)
+																								obtida(s):</p>
+																						</div>
+																					</div>
+																					<div class="row" style="padding-bottom: 20px">
+																						<div class="col-md-12 ">
+
+																							<textarea class="form-control" cols="100%"
+																								th:readonly="true"
+																								th:text="${teste.value.saidaObtida}" rows="8">  </textarea>
+																						</div>
+																					</div>
+																					<div class="row">
+																						<div class="col-md-12 ">
+																							<p
+																								class="text-white border border-1 bg-gradient bg-dark text-center">Saída(s)
+																								esperada(s):</p>
+																						</div>
+																					</div>
+																					<div class="row" style="padding-bottom: 20px">
+																						<div class="col-md-12 ">
+																							<textarea class="form-control" cols="100%"
+																								th:readonly="true" th:text="${teste.key.saidas}"
+																								rows="8">  </textarea>
+																						</div>
+																					</div>
+																				</div>
+																				<div
+																					class="modal-footer bg-gradient bg-dark row justify-content-md-center">
+																					<div class="col-auto ">
+																						<button type="button"
+																							class="btn bg-gradient btn-secondary"
+																							data-bs-dismiss="modal" th:text="Fechar"></button>
+																					</div>
+																				</div>
+																			</div>
+																		</div>
+																	</div>
+
+																</div>
+															</div>
+														</div>
 													</div>
 												</div>
 											</div>
 										</div>
+
 									</div>
-									<div th:if="${teste.value.correct} == false">
-										<div class="accordion-body bg-danger" th:id="${teste.key.id}">
-											<div class="container">
-												<div class="row">
-
-													<div class="col-md-4 ">
-														<p
-															class="text-white border border-1 bg-gradient bg-dark text-center">Entrada(s)
-															utilizada(s):</p>
-													</div>
-													<div class="col-md-4 ">
-														<p
-															class="text-white border border-1 bg-gradient bg-dark text-center">Saída(s)
-															obtida(s):</p>
-													</div>
-													<div class="col-md-4 ">
-														<p
-															class="text-white border border-1 bg-gradient bg-dark text-center">Saída(s)
-															esperada(s):</p>
-													</div>
-												</div>
-												<div class="row">
-
-													<div class="col-md-4 ">
-
-														<textarea class="form-control" cols="100%" readonly="true"
-															th:text="${teste.key.entradas}" rows="7">  </textarea>
-													</div>
-													<div class="col-md-4 ">
-
-														<textarea class="form-control" cols="100%" readonly="true"
-															th:text="${teste.value.saidaObtida}" rows="7">  </textarea>
-													</div>
-													<div class="col-md-4 ">
-
-
-														<textarea class="form-control" cols="100%" readonly="true"
-															th:text="${teste.key.saidas}" rows="7">  </textarea>
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
+								</th:block>
 							</div>
 						</div>
 
 					</div>
-				</th:block>
+				</div>
 			</div>
+
 		</div>
-
-
 
 	</form>
 

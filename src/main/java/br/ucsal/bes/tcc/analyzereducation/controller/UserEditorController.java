@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import br.ucsal.bes.tcc.analyzereducation.analyzer.JavaCode;
 import br.ucsal.bes.tcc.analyzereducation.dto.CodeEditorDTO;
@@ -52,34 +53,28 @@ public class UserEditorController {
 	}
 
 	@PostMapping("novo")
-	public String novo(@Valid CodeEditorDTO codeEditorDto, BindingResult result) {
-
-		if (result.hasErrors()) {
-			return "home/usereditor";
-		}
+	public String novo(@Valid CodeEditorDTO codeEditorDto, BindingResult result, RedirectAttributes attributes) {
 
 		Tarefa tarefa = BancoDeDados.obterTarefa(codeEditorDto.getId());
+		
+		if (result.hasErrors()) {
+			attributes.addFlashAttribute("mensagem", "Preencha o campo do editor de código-fonte para poder executá-lo.");
+			return "redirect:/home/usereditor?tarefaId=" + tarefa.getId();
+		}
 
 		JavaCode javaCode = new JavaCode();
 		Resultado resultado;
 		resultado = javaCode.executarCodigo(codeEditorDto.getEntrada(), tarefa);
 
 		StringBuilder sb = new StringBuilder();
-//		int i = 1;
-//		for (String saida : resultado.getSaidasObtidas()) {
-//
-//			i++;
-//		}
 		
 		int j = 1;
 		for (int i = 0; i < resultado.getSaidasObtidas().size(); i++) {
-			String str = "-----------------------------------------------------------------------------------Resultado da execução #" + j + ":-----------------------------------------------------------------------------------";
+			String str = "-------------------------------------------------------------------------------Resultado da execução #" + j + ":-------------------------------------------------------------------------------";
 			String saida = resultado.getSaidasObtidas().get(i);
-		//	boolean isCorrect = resultado.getResultadosTestes().get(i);
 			sb.append(str + Constante.QUEBRA_LINHA);
 			sb.append(saida + Constante.QUEBRA_LINHA);
 			codeEditorDto.getSaidasTesteObtidas().add(saida);
-		//	codeEditorDto.getResultadosTestes().add(isCorrect);
 			j++;
 		}
 		
@@ -103,8 +98,12 @@ public class UserEditorController {
 		}
 
 		
-	
-
+		if (resultado.getArquivosMetrica() != null && !resultado.getArquivosMetrica().isEmpty()) {
+			codeEditorDto.setArquivoMetrica(resultado.getArquivosMetrica().get(0));
+		} else {
+			codeEditorDto.setArquivoMetrica(null);
+		}
+		
 		codeEditorDto.setId(tarefa.getId());
 		codeEditorDto.setTestes(tarefa.getTestes());
 		codeEditorDto.setTitulo(tarefa.getTitulo());

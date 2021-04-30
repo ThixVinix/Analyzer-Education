@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns:th="http://www.thymeleaf.org">
+<head>
+<link rel="shortcut icon" href="#">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<meta charset="ISO-8859-1">
+<title>CodeTask</title>
+</head>
+<body>
+
+	<div class="alert alert-warning alert-dismissible text-center" role="alert"
+		th:if="${not #strings.isEmpty(mensagem)}">
+		<span class="text-center" th:text="${mensagem}"></span>
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+</body>
+</html>

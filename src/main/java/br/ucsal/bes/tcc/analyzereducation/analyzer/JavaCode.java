@@ -160,9 +160,9 @@ public class JavaCode extends AbstractArquivoMetrica {
 
 		salvarMetricas();
 
-		resetarMetricasProvisorias();
-
 		arqMetric = super.getArquivoPesquisado();
+
+		resetarMetricasProvisorias();
 
 		return Optional.of(arqMetric);
 	}
@@ -208,19 +208,19 @@ public class JavaCode extends AbstractArquivoMetrica {
 				try {
 
 					// Second stage - Execute
-					 resultadoTeste = executarInput(DIRETORIO, "java", nomeArquivo, teste.getEntradas(),
+					resultadoTeste = executarInput(DIRETORIO, "java", nomeArquivo, teste.getEntradas(),
 							teste.getSaidas());
 
-					 result.getMapResultTest().put(teste, resultadoTeste);
-				//	result.getSaidasObtidas().add(saidaTeste.getSaidaObtida());
-				//	result.getResultadosTestes().add(resultadoTeste.getCorrect());
+					result.getMapResultTest().put(teste, resultadoTeste);
+					// result.getSaidasObtidas().add(saidaTeste.getSaidaObtida());
+					// result.getResultadosTestes().add(resultadoTeste.getCorrect());
 
 				} catch (IOException e) {
 					output.append(e.getMessage() + Constante.QUEBRA_LINHA);
 				}
-				
+
 				result.getSaidasObtidas().add(output.toString());
-				//result.getMapResultTest().put(teste, resultadoTeste);
+				// result.getMapResultTest().put(teste, resultadoTeste);
 				output = new StringBuilder();
 
 			}

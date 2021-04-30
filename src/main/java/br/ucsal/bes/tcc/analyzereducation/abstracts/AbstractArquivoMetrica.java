@@ -183,7 +183,7 @@ public abstract class AbstractArquivoMetrica {
 			Matcher encontrador = padrao.matcher(line);
 			while (encontrador.find()) {
 				if (!line.trim().contains(Constante.ABSTRACT) || !line.trim().endsWith(Constante.PONTO_VIRGULA)) {
-				//	System.out.println(line);
+					// System.out.println(line);
 					qtdMetodos++;
 				}
 			}
@@ -325,23 +325,17 @@ public abstract class AbstractArquivoMetrica {
 
 	protected void salvarMetricas() {
 
-		if (Util.isNotNullOrZeroNumber(qtdLinhasDeCodigo))
-			getArquivoPesquisado().setQtdLoc(qtdLinhasDeCodigo);
+		getArquivoPesquisado().setQtdLoc(qtdLinhasDeCodigo);
 
-		if (Util.isNotNullOrZeroNumber(qtdClasses))
-			getArquivoPesquisado().setQtdClasses(qtdClasses);
+		getArquivoPesquisado().setQtdClasses(qtdClasses);
 
-		if (Util.isNotNullOrZeroNumber(qtdMetodos))
-			getArquivoPesquisado().setQtdMetodos(qtdMetodos);
+		getArquivoPesquisado().setQtdMetodos(qtdMetodos);
 
-		if (Util.isNotNullOrZeroNumber(qtdComentarios))
-			getArquivoPesquisado().setQtdComentarios(qtdComentarios);
+		getArquivoPesquisado().setQtdComentarios(qtdComentarios);
 
-		if (Util.isNotNullOrZeroNumber(qtdMetodoDeus))
-			getArquivoPesquisado().setQtdMetodoDeus(qtdMetodoDeus);
+		getArquivoPesquisado().setQtdMetodoDeus(qtdMetodoDeus);
 
-		if (Util.isNotNullOrZeroNumber(qtdClasseDeus))
-			getArquivoPesquisado().setQtdClasseDeus(qtdClasseDeus);
+		getArquivoPesquisado().setQtdClasseDeus(qtdClasseDeus);
 
 		if (Util.isNotNullOrEmpty(conteudoCompleto)) {
 			getArquivoPesquisado().setConteudoCompleto(conteudoCompleto.toString());
