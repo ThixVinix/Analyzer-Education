@@ -3,20 +3,20 @@ package br.ucsal.bes.tcc.analyzereducation.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.ucsal.bes.tcc.analyzereducation.model.Atividade;
-import br.ucsal.bes.tcc.analyzereducation.model.Autor;
+import br.ucsal.bes.tcc.analyzereducation.model.Filtro;
 import br.ucsal.bes.tcc.analyzereducation.model.Tarefa;
 import br.ucsal.bes.tcc.analyzereducation.model.Teste;
 
 public class BancoDeDados {
 
 	private static List<Tarefa> tarefas = new ArrayList<>();
-	
+
 	static {
 		Tarefa tarefa1 = new Tarefa();
 		tarefa1.setId(0L);
 		tarefa1.setTitulo("Soma entre dois números");
-		tarefa1.setDescricao("Faça a soma entre 452 + 267");
+		tarefa1.setDescricao(
+				"Faça um programa que realize a soma de \"A\" + \"B\" e realize a soma de \"C\" + \"D\". Em seguida, exiba o resultado da soma de \"A+B\" na primeira linha, e o resultado da soma de \"C+D\" na segunda linha do console. Caso seja inserido um número decimal, exiba no console a mensagem: \"Não é permitido a inserção de números decimais.\".");
 		Teste teste1 = new Teste();
 		teste1.setId(1L);
 		teste1.setEntradas("2\n2\n4\n4");
@@ -28,7 +28,7 @@ public class BancoDeDados {
 		Teste teste3 = new Teste();
 		teste3.setId(3L);
 		teste3.setEntradas("0.5\n0.5\n7\n5");
-		teste3.setSaidas("1\n12");
+		teste3.setSaidas("Não é permitido a inserção de números decimais.");
 		Teste teste4 = new Teste();
 		teste4.setId(4L);
 		teste4.setEntradas("4\n4\n1\n1");
@@ -37,25 +37,50 @@ public class BancoDeDados {
 		tarefa1.getTestes().add(teste2);
 		tarefa1.getTestes().add(teste3);
 		tarefa1.getTestes().add(teste4);
-		
+		Filtro filtro1 = new Filtro();
+		filtro1.setId(1L);
+		filtro1.setNomeFiltro("Scanner");
+		filtro1.setQtdDemandada(1);
+		Filtro filtro2 = new Filtro();
+		filtro2.setId(2L);
+		filtro2.setNomeFiltro("System.out.println");
+		filtro2.setQtdDemandada(2);
+		Filtro filtro3 = new Filtro();
+		filtro3.setId(3L);
+		filtro3.setNomeFiltro("try");
+		filtro3.setQtdDemandada(1);
+		Filtro filtro4 = new Filtro();
+		filtro4.setId(4L);
+		filtro4.setNomeFiltro("catch");
+		filtro4.setQtdDemandada(1);
+		Filtro filtro5 = new Filtro();
+		filtro5.setId(5L);
+		filtro5.setNomeFiltro("public static void main(String[] args) {");
+		filtro5.setQtdDemandada(1);
+		tarefa1.getFiltros().add(filtro1);
+		tarefa1.getFiltros().add(filtro2);
+		tarefa1.getFiltros().add(filtro3);
+		tarefa1.getFiltros().add(filtro4);
+		tarefa1.getFiltros().add(filtro5);
+
 		Tarefa tarefa2 = new Tarefa();
 		tarefa2.setId(1L);
 		tarefa2.setTitulo("Subtração entre dois números");
 		tarefa2.setDescricao("Faça a subtração entre 452 - 267");
-		
+
 		tarefas.add(tarefa1);
 		tarefas.add(tarefa2);
-		
+
 	}
-	
+
 	public static List<Tarefa> obterTarefas() {
 		return tarefas;
 	}
-	
+
 	public static Tarefa obterTarefa(Long id) {
-		
+
 		return tarefas.get(id.intValue());
-		
+
 //			Teste teste1 = new Teste();
 //			teste1.setId(1L);
 //			teste1.setEntradas("2\n2\n4\n4");
@@ -115,8 +140,7 @@ public class BancoDeDados {
 //			atividades.add(atividade1);
 //			atividades.add(atividade2);
 //			getAutor().setAtividades(atividades);
-		
-		
+
 	}
-	
+
 }

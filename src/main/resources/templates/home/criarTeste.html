@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+<link rel="shortcut icon" href="#">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<link rel="stylesheet" th:href="@{/static/css/editor-styles.css}">
+<meta charset="UTF-8">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<title>CodeTask</title>
+</head>
+<body style="background-color: rgb(0, 128, 192);">
+
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark navbar">
+		<div class="container-fluid">
+			<a class="navbar-brand" href="#">CodeTask</a>
+			<button class="navbar-toggler" type="button"
+				data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+				aria-controls="navbarNavAltMarkup" aria-expanded="false"
+				aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+				<div class="navbar-nav">
+					<a class="nav-link active" aria-current="page" href="#">Home</a> <a
+						class="nav-link" href="#">Visualizar Atividades</a> <a
+						class="nav-link" href="#">Criar Atividade</a> <a
+						class="nav-link disabled" href="#" tabindex="-1"
+						aria-disabled="true">Disabled</a>
+				</div>
+			</div>
+		</div>
+	</nav>
+
+
+
+	<div class="container" style="padding-top: 20px">
+		<div class="card text-white  bg-dark">
+			<div class="card-header bg-gradient">
+				<h1 class="display-1 text-center">Criar Teste</h1>
+			</div>
+			<div class="card-body ">
+				<div class="card-text">
+
+					<div class="container"
+						style="display: flex; align-items: center; justify-content: center;">
+
+
+						<div class="alert alert-primary alert-dismissible fade show"
+							role="alert">
+
+
+							<h4 class="alert-heading">Sobre a criação de testes:</h4>
+							<p>Testes são úteis nos seguintes casos:</p>
+							<ol>
+								<li>Quando a tarefa espera entradas dinâmicas a serem
+									preenchidas para poder prosseguir com a execução da mesma. E
+									espera alguma(s) saída(s) a ser/serem testada(s).</li>
+								<li>Quando a tafera não espera entradas dinâmicas, mas
+									espera alguma(s) saída(s) a ser/serem testada(s).</li>
+							</ol>
+							<hr>
+							<p class="mb-0">Ao criar um teste, o mesmo pode ou não conter
+								entrada(s).</p>
+							<hr>
+							<p class="mb-0">É obrigatório que contenha ao menos 1 saída
+								esperada para que o teste possa ser criado com sucesso. Caso não
+								precise de saída(s) esperada(s), não é necessário a criação do
+								teste.</p>
+							<hr>
+							<p class="mb-0">
+								<strong> Observação para o preenchimento das entradas:
+								</strong> Para cada "<em>enter</em>" digitado (quebra de linha),
+								significa uma nova entrada que será testada em sequência das
+								anteriores. Isto é, caso o campo "entrada(s)" contenha 2(duas)
+								linhas que foram separadas através de um "<em>enter</em>", então
+								o teste possuirá 2(duas) entradas totais. Lembre-se que a ordem
+								das entradas influenciará estritamente na execução do teste.
+							</p>
+							<hr>
+							<p class="mb-0">Testes criados poderão ser inseridos
+								posteriormente em tarefas já existentes.</p>
+
+
+							<button type="button" class="btn-close" data-bs-dismiss="alert"
+								aria-label="Close"></button>
+						</div>
+					</div>
+
+					<div class="container"
+						style="display: flex; align-items: center; justify-content: center;">
+						<form class="was-validated">
+
+							<div class="mb-3">
+								<label for="entradas" class="col-sm-2 col-form-label fs-4"
+									th:text="'Entrada(s)'"></label>
+								<div class="col-sm-12">
+									<textarea class="form-control" cols="100%" id="entradas"
+										rows="8"></textarea>
+								</div>
+							</div>
+
+							<div class="mb-5">
+								<label for="saidas" class="col-sm-2 col-form-label fs-4"
+									th:text="'Saída(s)'"></label>
+								<div class="col-sm-12">
+									<textarea class="form-control is-valid" cols="100%" id="saidas"
+										rows="8" th:required="true"></textarea>
+									<div class="invalid-feedback">Preencha o campo "Saída(s)"</div>
+								</div>
+							</div>
+							<div class="d-grid gap-2 d-md-flex justify-content-md-end">
+								<button class="btn btn-secondary bg-gradient me-md-2"
+									type="button">Voltar</button>
+								<button class="btn btn-success bg-gradient" type="submit">Criar</button>
+							</div>
+						</form>
+					</div>
+
+
+
+				</div>
+
+
+			</div>
+
+
+		</div>
+
+
+	</div>
+
+
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"></script>
+
+
+
+</body>
+</html>

@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -25,6 +26,7 @@ import org.apache.logging.log4j.Logger;
 import br.ucsal.bes.tcc.analyzereducation.abstracts.AbstractArquivoMetrica;
 import br.ucsal.bes.tcc.analyzereducation.enums.ValidacaoArquivoEnum;
 import br.ucsal.bes.tcc.analyzereducation.model.ArquivoMetrica;
+import br.ucsal.bes.tcc.analyzereducation.model.Filtro;
 import br.ucsal.bes.tcc.analyzereducation.model.Resultado;
 import br.ucsal.bes.tcc.analyzereducation.model.ResultadoTeste;
 import br.ucsal.bes.tcc.analyzereducation.model.Tarefa;
@@ -48,6 +50,8 @@ public class JavaCode extends AbstractArquivoMetrica {
 	private Map<ArquivoMetrica, Boolean> filesJava;
 
 	private StringBuilder output;
+
+	private Resultado result;
 
 	public JavaCode() {
 		super();
@@ -111,7 +115,7 @@ public class JavaCode extends AbstractArquivoMetrica {
 		return ValidacaoArquivoEnum.SUCESSO;
 	}
 
-	public Optional<ArquivoMetrica> iniciarAnalise(File arquivo, Integer limiteMinMetodoDeus,
+	public Optional<ArquivoMetrica> iniciarAnalise(File arquivo, List<Filtro> listaFiltros, Integer limiteMinMetodoDeus,
 			Integer limiteMinClasseDeus) throws IOException {
 
 		ArquivoMetrica arqMetric = null;
@@ -158,6 +162,15 @@ public class JavaCode extends AbstractArquivoMetrica {
 		qtdClasseDeus = verificarEntidadesDeusas(limiteMinClasseDeus, false);
 		LOGGER.info("Análise de classes deusas finalizada.");
 
+		if (listaFiltros != null && !listaFiltros.isEmpty()) {
+			for (Filtro filtro : listaFiltros) {
+				String mFilter = String.format("Iniciando verificação do filtro \"%s\"...", filtro.getNomeFiltro());
+				LOGGER.info(mFilter);
+				result.getMapResultFilter().put(filtro, verificarUtilizacaoFiltro(filtro));
+				LOGGER.info("Verificação efetuada.");
+			}
+		}
+
 		salvarMetricas();
 
 		arqMetric = super.getArquivoPesquisado();
@@ -169,7 +182,7 @@ public class JavaCode extends AbstractArquivoMetrica {
 
 	public Resultado executarCodigo(String conteudo, Tarefa tarefa) {
 
-		Resultado result = new Resultado();
+		result = new Resultado();
 
 		setFileJava(DirectoryUtil.criarArquivoComExtensao(DIRETORIO_NOME_ARQUIVO, Constante.ARQUIVO_TIPO_JAVA));
 
@@ -183,7 +196,7 @@ public class JavaCode extends AbstractArquivoMetrica {
 		Optional<ArquivoMetrica> arqMetric;
 
 		try {
-			arqMetric = iniciarAnalise(getFileJava(), Constante.QTD_MIN_LINHAS_METODO_DEUS,
+			arqMetric = iniciarAnalise(getFileJava(), tarefa.getFiltros(), Constante.QTD_MIN_LINHAS_METODO_DEUS,
 					Constante.QTD_MIN_LINHAS_CLASSE_DEUS);
 
 			if (arqMetric.isPresent())
@@ -202,31 +215,36 @@ public class JavaCode extends AbstractArquivoMetrica {
 		if (arquivoPrincipal != null) {
 			String nomeArquivo = arquivoPrincipal.obterNomeArquivo();
 			// First stage - Compile
-			output.append(executar(DIRETORIO, "javac", nomeArquivo));
-			ResultadoTeste resultadoTeste;
-			for (Teste teste : tarefa.getTestes()) {
-				try {
+			output.append(compilar(DIRETORIO, "javac", nomeArquivo));
 
-					// Second stage - Execute
-					resultadoTeste = executarInput(DIRETORIO, "java", nomeArquivo, teste.getEntradas(),
-							teste.getSaidas());
+			try {
+				if (tarefa.getTestes() != null && !tarefa.getTestes().isEmpty()) {
 
-					result.getMapResultTest().put(teste, resultadoTeste);
-					// result.getSaidasObtidas().add(saidaTeste.getSaidaObtida());
-					// result.getResultadosTestes().add(resultadoTeste.getCorrect());
+					for (Teste teste : tarefa.getTestes()) {
 
-				} catch (IOException e) {
-					output.append(e.getMessage() + Constante.QUEBRA_LINHA);
+						// Second stage - Execute
+						ResultadoTeste resultadoComTeste = executarComTeste(DIRETORIO, "java", nomeArquivo,
+								teste.getEntradas(), teste.getSaidas());
+
+						result.getMapResultTest().put(teste, resultadoComTeste);
+						result.getSaidasObtidas().add(output.toString());
+						output = new StringBuilder();
+
+					}
+
+				} else {
+					executarSemTeste(DIRETORIO, "java", nomeArquivo);
+					result.getSaidasObtidas().add(output.toString());
+					output = new StringBuilder();
 				}
 
-				result.getSaidasObtidas().add(output.toString());
-				// result.getMapResultTest().put(teste, resultadoTeste);
-				output = new StringBuilder();
-
+			} catch (IOException e) {
+				output.append(e.getMessage() + Constante.QUEBRA_LINHA);
 			}
 
 		} else {
 			LOGGER.warn("Não foi possível executar o código");
+			output = new StringBuilder();
 		}
 
 		return result;
@@ -306,12 +324,12 @@ public class JavaCode extends AbstractArquivoMetrica {
 		return false;
 	}
 
-	public static String executar(String path, String comando, String arquivo) {
-		// System.out.println("Executando comando:");
+	public static String compilar(String path, String comando, String arquivo) {
+
 		StringBuilder sb = new StringBuilder();
 
 		ProcessBuilder builder = new ProcessBuilder(comando, arquivo);
-		/// path + "arquivos" = path/arquivos
+
 		builder.directory(new File(path));
 		Process process;
 		try {
@@ -323,12 +341,10 @@ public class JavaCode extends AbstractArquivoMetrica {
 
 			String line;
 			while ((line = reader.readLine()) != null) {
-				// System.out.println(line);
 				sb.append(line + Constante.QUEBRA_LINHA);
 			}
 
 			while ((line = error.readLine()) != null) {
-				// System.out.println(line);
 				sb.append(line + Constante.QUEBRA_LINHA);
 			}
 
@@ -347,9 +363,8 @@ public class JavaCode extends AbstractArquivoMetrica {
 
 	}
 
-	public ResultadoTeste executarInput(String path, String comando, String arquivo, String entrada, String saida)
+	public ResultadoTeste executarComTeste(String path, String comando, String arquivo, String entrada, String saida)
 			throws IOException {
-		// System.out.println("Executando comando: " + comando + " " + arquivo);
 
 		ProcessBuilder builder = new ProcessBuilder(comando, arquivo);
 		builder.directory(new File(path));
@@ -360,10 +375,10 @@ public class JavaCode extends AbstractArquivoMetrica {
 		InputStream stdout = process.getInputStream();
 
 		BufferedReader reader = new BufferedReader(new InputStreamReader(stdout));
-		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(stdin));
 
 		BufferedReader error = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 
+		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(stdin));
 		boolean isFirstLine = true;
 		StringTokenizer st = new StringTokenizer(entrada, Constante.QUEBRA_LINHA);
 		while (st.hasMoreTokens()) {
@@ -393,24 +408,44 @@ public class JavaCode extends AbstractArquivoMetrica {
 
 		scanner.close();
 
-		System.out.println("Saída obtida: \n" + resposta.toString());
-		System.out.println("Resposta: " + resposta.toString().equals(saida));
-
 		output.append(resposta.toString());
 
 		boolean isCorrect = resposta.toString().equals(saida);
 
-		ResultadoTeste resultadoTeste = new ResultadoTeste();
+		ResultadoTeste rTest = new ResultadoTeste();
 
-		if (Util.isNotNullOrEmpty(resposta.toString())) {
-			resultadoTeste.setSaidaObtida(resposta.toString());
-		} else {
-			resultadoTeste.setSaidaObtida(Constante.VAZIO);
+		rTest.setSaidaObtida(resposta.toString());
+		rTest.setCorrect(isCorrect);
+
+		return rTest;
+	}
+
+	public void executarSemTeste(String path, String comando, String arquivo) throws IOException {
+
+		StringBuilder sb = new StringBuilder();
+
+		ProcessBuilder builder = new ProcessBuilder(comando, arquivo);
+
+		builder.directory(new File(path));
+		Process process;
+
+		process = builder.start();
+
+		BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+		BufferedReader error = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+
+		String line;
+		while ((line = reader.readLine()) != null) {
+			sb.append(line + Constante.QUEBRA_LINHA);
 		}
 
-		resultadoTeste.setCorrect(isCorrect);
+		while ((line = error.readLine()) != null) {
+			sb.append(line + Constante.QUEBRA_LINHA);
+		}
 
-		return resultadoTeste;
+		output.append(sb.toString());
+
 	}
 
 	public File getFileJava() {
@@ -420,22 +455,6 @@ public class JavaCode extends AbstractArquivoMetrica {
 	public void setFileJava(File fileJava) {
 		this.fileJava = fileJava;
 	}
-
-//	public String getAbsolutePath() {
-//		if (Util.isNotNullOrEmpty(getArquivoPesquisado().getArquivo().getAbsoluteFile())) {
-//			return getArquivoPesquisado().getArquivo().getAbsolutePath();
-//		} else {
-//			return getFileJava().getAbsolutePath();
-//		}
-//	}
-//
-//	public String getFileName() {
-//		if (Util.isNotNullOrEmpty(getArquivoPesquisado().getArquivo().getAbsoluteFile())) {
-//			return getArquivoPesquisado().getArquivo().getName();
-//		} else {
-//			return getFileJava().getName();
-//		}
-//	}
 
 	public Map<ArquivoMetrica, Boolean> getFilesJava() {
 		return filesJava;

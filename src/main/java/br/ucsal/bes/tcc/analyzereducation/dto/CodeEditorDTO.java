@@ -10,6 +10,8 @@ import javax.validation.constraints.NotBlank;
 
 import br.ucsal.bes.tcc.analyzereducation.model.ArquivoMetrica;
 import br.ucsal.bes.tcc.analyzereducation.model.CodeEditor;
+import br.ucsal.bes.tcc.analyzereducation.model.Filtro;
+import br.ucsal.bes.tcc.analyzereducation.model.ResultadoFiltro;
 import br.ucsal.bes.tcc.analyzereducation.model.ResultadoTeste;
 import br.ucsal.bes.tcc.analyzereducation.model.Teste;
 import br.ucsal.bes.tcc.analyzereducation.util.Util;
@@ -17,7 +19,7 @@ import br.ucsal.bes.tcc.analyzereducation.util.Util;
 public class CodeEditorDTO {
 
 	private Long id;
-	 
+
 	private String autor;
 
 	private String nomeArquivo;
@@ -30,35 +32,43 @@ public class CodeEditorDTO {
 	private LocalDate dataCriacao;
 
 	private LocalDate dataAlteracao;
-		
+
 	private List<String> saidasTesteObtidas;
-	
+
 	private List<String> saidasTesteEsperadas;
-	
+
 	private List<Boolean> resultadosTestes;
-	
+
 	private List<Boolean> resultadosFiltros;
-	
+
 	private List<Teste> testes;
-	
+
+	private List<Filtro> filtros;
+
 	private Map<Teste, ResultadoTeste> mapResultTest;
 	
+	private Map<Filtro, ResultadoFiltro> mapResultFilter;
+
 	private Integer percentualAcerto;
 	
+	private Integer percentualUtilizacoes;
+
 	private String titulo;
-	
+
 	private String descricao;
-	
-	private ArquivoMetrica arquivoMetrica; 
+
+	private ArquivoMetrica arquivoMetrica;
 
 	public CodeEditorDTO() {
 		setSaidasTesteObtidas(new ArrayList<>());
 		setSaidasTesteEsperadas(new ArrayList<>());
 		setResultadosTestes(new ArrayList<>());
 		setResultadosFiltros(new ArrayList<>());
+		setFiltros(new ArrayList<>());
 		setMapResultTest(new HashMap<>());
+		setMapResultFilter(new HashMap<>());
 	}
-	
+
 	public String getAutor() {
 		return autor;
 	}
@@ -106,7 +116,7 @@ public class CodeEditorDTO {
 	public void setDataAlteracao(LocalDate dataAlteracao) {
 		this.dataAlteracao = dataAlteracao;
 	}
-	
+
 	public List<String> getSaidasTesteObtidas() {
 		return saidasTesteObtidas;
 	}
@@ -212,6 +222,30 @@ public class CodeEditorDTO {
 
 	public void setPercentualAcerto(Integer percentualAcerto) {
 		this.percentualAcerto = percentualAcerto;
+	}
+
+	public List<Filtro> getFiltros() {
+		return filtros;
+	}
+
+	public void setFiltros(List<Filtro> filtros) {
+		this.filtros = filtros;
+	}
+
+	public Integer getPercentualUtilizacoes() {
+		return percentualUtilizacoes;
+	}
+
+	public void setPercentualUtilizacoes(Integer percentualUtilizacoes) {
+		this.percentualUtilizacoes = percentualUtilizacoes;
+	}
+
+	public Map<Filtro, ResultadoFiltro> getMapResultFilter() {
+		return mapResultFilter;
+	}
+
+	public void setMapResultFilter(Map<Filtro, ResultadoFiltro> mapResultFilter) {
+		this.mapResultFilter = mapResultFilter;
 	}
 
 }

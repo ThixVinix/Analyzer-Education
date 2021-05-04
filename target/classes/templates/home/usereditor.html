@@ -8,7 +8,7 @@
 <link rel="stylesheet" th:href="@{/static/css/editor-styles.css}">
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-	
+
 <meta charset="UTF-8">
 <title>CodeTask</title>
 <style type="text/css" media="screen">
@@ -47,15 +47,52 @@
 				<h5 class="card-title text-center" th:text="${codeEditorDTO.titulo}"></h5>
 			</div>
 			<div class="card-body">
-				<p class="card-text text-center"
-					th:text="${codeEditorDTO.descricao}"></p>
+				<p class="card-text" th:text="${codeEditorDTO.descricao}"></p>
 			</div>
 		</div>
 	</div>
-<div class="container">
-	<th:block th:include="home/mensagemValidacao">
-	</th:block>
-</div>
+
+	<div th:if="*{codeEditorDTO.filtros} != null and ${not #lists.isEmpty(codeEditorDTO.filtros)}">
+		<div class="container" style="margin-bottom: 0px">
+
+			<div class="card text-white bg-dark mb-3">
+				<div class="card-header bg-gradient">
+					<h5 class="card-title text-center">Premissa(s) da Tarefa</h5>
+				</div>
+
+				<div class="card-body">
+					<p class="card-text text-center">Utilize o(s) seguinte(s)
+						nome(s) da(s) premissa(s) solicitada(s) para esta tarefa e alcance
+						a(s) quantidade(s) determinada(s):</p>
+
+					<table
+						class="table table-secondary table-striped bg-gradient table-hover">
+						<caption></caption>
+						<thead>
+							<tr>
+								<th scope="col">#</th>
+								<th scope="col">Nome</th>
+								<th scope="col">Quantidade demandada</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="filtro : ${codeEditorDTO.filtros}">
+								<th scope="row" th:text="*{filtro.id}"></th>
+								<td th:text="*{filtro.nomeFiltro}"></td>
+								<td th:text="*{filtro.qtdDemandada}"></td>
+							</tr>
+						</tbody>
+
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="container">
+		<th:block th:include="home/mensagemValidacao">
+		</th:block>
+	</div>
 	<form th:object="${codeEditorDTO}" class="card-body"
 		th:action="@{/home/novo}" method="post">
 
@@ -150,6 +187,86 @@
 					</li>
 				</ul>
 			</div>
+		</div>
+
+
+		<div th:if="*{percentualUtilizacoes} != null">
+
+			<div class="container" style="padding-top: 20px; margin-bottom: 0px">
+				<div class="card text-white bg-dark mb-3">
+					<div class="card-header bg-gradient">
+						<h5 class="card-title text-center">
+							<span th:text="'Taxa de utilização da(s) premissa(s):'"> </span>
+						</h5>
+					</div>
+					<div class="card-body">
+						<div th:if="*{percentualUtilizacoes} > 0">
+							<div
+								class="h-auto progress progress-bar-striped progress-bar-animated bg-danger">
+								<div
+									class="progress-bar progress-bar-striped progress-bar-animated bg-success"
+									role="progressbar"
+									th:style="'width: ' + *{percentualUtilizacoes} + '%'"
+									th:attr="aria-valuenow=*{percentualUtilizacoes}"
+									aria-valuemin="0" aria-valuemax="100">
+									<span class="fw-bold fst-italic fs-6"
+										th:text="*{percentualUtilizacoes} + '%'"> </span>
+								</div>
+							</div>
+						</div>
+						<div th:if="*{percentualUtilizacoes} == 0">
+							<div
+								class="h-auto progress progress-bar-striped progress-bar-animated bg-danger">
+								<span class="fw-bold fst-italic fs-6 text-center col-12"
+									th:text="'0%'"> </span>
+							</div>
+						</div>
+
+						<div class="container" style="padding-top: 20px">
+							<div class="row ">
+
+								<table class="table table-info table-striped table-hover">
+									<caption></caption>
+									<thead>
+										<tr>
+											<th scope="col">#</th>
+											<th scope="col">Nome</th>
+											<th scope="col">Quantidade demandada</th>
+											<th scope="col">Quantidade utilizada</th>
+											<th scope="col">Resultado</th>
+										</tr>
+									</thead>
+
+									<tbody>
+										<tr th:each="filtro : ${codeEditorDTO.mapResultFilter}">
+											<th:block th:if="${filtro.value.usedCorrectly} == true">
+												<th scope="row" th:text="${filtro.key.id}"></th>
+												<td th:text="${filtro.key.nomeFiltro}"></td>
+												<td th:text="${filtro.key.qtdDemandada}"></td>
+												<td th:text="${filtro.value.qtdUtilizacoes}"></td>
+												<td><span
+													class="badge rounded-pill bg-gradient bg-success">Success</span>
+												</td>
+											</th:block>
+											<th:block th:if="${filtro.value.usedCorrectly} == false">
+												<th scope="row" th:text="${filtro.key.id}"></th>
+												<td th:text="${filtro.key.nomeFiltro}"></td>
+												<td th:text="${filtro.key.qtdDemandada}"></td>
+												<td th:text="${filtro.value.qtdUtilizacoes}"></td>
+												<td><span
+													class="badge rounded-pill bg-gradient bg-danger">Fail</span>
+												</td>
+											</th:block>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+
 		</div>
 
 		<div th:if="*{percentualAcerto} != null">
@@ -514,7 +631,6 @@
 			</div>
 
 		</div>
-
 	</form>
 
 	<script th:src="@{/static/js/ace.js}" type="text/javascript"

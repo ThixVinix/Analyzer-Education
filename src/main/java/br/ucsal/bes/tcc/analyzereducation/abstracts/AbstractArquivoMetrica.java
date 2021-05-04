@@ -16,6 +16,8 @@ import org.apache.logging.log4j.Logger;
 
 import br.ucsal.bes.tcc.analyzereducation.model.ArquivoMetrica;
 import br.ucsal.bes.tcc.analyzereducation.model.Auxiliar;
+import br.ucsal.bes.tcc.analyzereducation.model.Filtro;
+import br.ucsal.bes.tcc.analyzereducation.model.ResultadoFiltro;
 import br.ucsal.bes.tcc.analyzereducation.util.Constante;
 import br.ucsal.bes.tcc.analyzereducation.util.Util;
 
@@ -302,6 +304,73 @@ public abstract class AbstractArquivoMetrica {
 
 		}
 		return contGod;
+	}
+
+	public ResultadoFiltro verificarUtilizacaoFiltro(Filtro filtro) {
+
+		String conteudoString = conteudoCompactado.toString();
+		StringTokenizer st = new StringTokenizer(conteudoString, Constante.QUEBRA_LINHA);
+		int countAspas = Constante.NUMBER_ZERO_INT;
+		boolean isString = false;
+
+		int indiceFiltroInicial = 0;
+
+		int qtdUtilizada = 0;
+
+		while (st.hasMoreTokens()) {
+			String line = st.nextToken().trim();
+
+			if (line.contains(filtro.getNomeFiltro()) && !line.contains("import")) {
+
+				isString = false;
+
+				if (filtro.getNomeFiltro() != null) {
+					indiceFiltroInicial = line.indexOf(filtro.getNomeFiltro());
+				}
+
+				for (int i = 0; i < line.length(); i++) {
+
+					if (line.charAt(i) == Constante.ASPAS_DUPLAS && countAspas == 1
+							&& line.charAt(i - 1) != Constante.BARRA_INVERTIDA) {
+						countAspas++;
+					}
+
+					if (line.charAt(i) == Constante.ASPAS_DUPLAS && countAspas == Constante.NUMBER_ZERO_INT) {
+						countAspas++;
+						isString = true;
+					}
+
+					if (countAspas == 2) {
+						countAspas = Constante.NUMBER_ZERO_INT;
+						isString = false;
+					}
+
+					if (indiceFiltroInicial == i) {
+						break;
+					}
+
+				}
+
+				if (!isString) {
+					qtdUtilizada++;
+				}
+			}
+
+		}
+
+		boolean isCorrect = false;
+
+		if (filtro.getQtdDemandada() != null) {
+			if (qtdUtilizada == filtro.getQtdDemandada()) {
+				isCorrect = true;
+			}
+		} else {
+			if (qtdUtilizada > 0) {
+				isCorrect = true;
+			}
+		}
+
+		return new ResultadoFiltro(qtdUtilizada, isCorrect);
 	}
 
 	protected void salvarDiretorioAndArquivo(Path diretorio, File arquivo) {

@@ -16,6 +16,8 @@ public class Resultado {
 	private List<ArquivoMetrica> arquivosMetrica;
 	
 	private Map<Teste, ResultadoTeste> mapResultTest;
+	
+	private Map<Filtro, ResultadoFiltro> mapResultFilter;
 
 	public Resultado() {
 		setSaidasObtidas(new ArrayList<>());
@@ -23,6 +25,7 @@ public class Resultado {
 		setResultadosFiltros(new ArrayList<>());
 		setArquivosMetrica(new ArrayList<>());
 		setMapResultTest(new HashMap<>());
+		setMapResultFilter(new HashMap<>());
 	}
 
 	public List<String> getSaidasObtidas() {
@@ -63,6 +66,14 @@ public class Resultado {
 
 	public void setMapResultTest(Map<Teste, ResultadoTeste> mapResultTest) {
 		this.mapResultTest = mapResultTest;
+	}
+
+	public Map<Filtro, ResultadoFiltro> getMapResultFilter() {
+		return mapResultFilter;
+	}
+
+	public void setMapResultFilter(Map<Filtro, ResultadoFiltro> mapResultFilter) {
+		this.mapResultFilter = mapResultFilter;
 	}
 	
 }
