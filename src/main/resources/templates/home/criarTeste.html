@@ -2,103 +2,138 @@
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
 <link rel="shortcut icon" href="#">
+<!-- Bootstrap CSS -->
 <link
-	href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css"
-	rel="stylesheet">
-<link rel="stylesheet" th:href="@{/static/css/editor-styles.css}">
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+	rel="stylesheet"
+	integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+	crossorigin="anonymous">
 <meta charset="UTF-8">
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
 <title>CodeTask</title>
 </head>
 <body style="background-color: rgb(0, 128, 192);">
 
-	<nav class="navbar navbar-expand-lg navbar-dark bg-dark navbar">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 		<div class="container-fluid">
-			<a class="navbar-brand" href="#">CodeTask</a>
+			<a class="navbar-brand fst-italic text-warning" th:href="@{/home}">CodeTask</a>
 			<button class="navbar-toggler" type="button"
-				data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
-				aria-controls="navbarNavAltMarkup" aria-expanded="false"
+				data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+				aria-controls="navbarNavDropdown" aria-expanded="false"
 				aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
-			<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-				<div class="navbar-nav">
-					<a class="nav-link active" aria-current="page" href="#">Home</a> <a
-						class="nav-link" href="#">Visualizar Atividades</a> <a
-						class="nav-link" href="#">Criar Atividade</a> <a
-						class="nav-link disabled" href="#" tabindex="-1"
-						aria-disabled="true">Disabled</a>
-				</div>
+			<div class="collapse navbar-collapse" id="navbarNavDropdown">
+				<ul class="navbar-nav">
+					<li class="nav-item"><a class="nav-link" aria-current="page"
+						th:href="@{/home}">Home</a></li>
+					<li class="nav-item dropdown"><a
+						class="nav-link dropdown-toggle" href="#"
+						id="navbarDropdownMenuLink" role="button"
+						data-bs-toggle="dropdown" aria-expanded="false"> Criar </a>
+						<ul class="dropdown-menu dropdown-menu-dark"
+							aria-labelledby="navbarDropdownMenuLink">
+							<li><a class="dropdown-item" th:href="@{/home/criarTarefa}">Tarefa</a></li>
+							<li><a class="dropdown-item" th:href="@{/home/criarTeste}">Teste</a></li>
+							<li><a class="dropdown-item" th:href="@{/home/criarFiltro}">Filtro</a></li>
+						</ul></li>
+					<li class="nav-item dropdown"><a
+						class="nav-link dropdown-toggle" href="#"
+						id="navbarDropdownMenuLink" role="button"
+						data-bs-toggle="dropdown" aria-expanded="false"> Visualizar </a>
+						<ul class="dropdown-menu dropdown-menu-dark"
+							aria-labelledby="navbarDropdownMenuLink">
+							<li><a class="dropdown-item" th:href="@{/home/tarefas}">Tarefas</a></li>
+							<li><a class="dropdown-item" th:href="@{/home/testes}">Testes</a></li>
+							<li><a class="dropdown-item" th:href="@{/home/filtros}">Filtros</a></li>
+						</ul></li>
+				</ul>
 			</div>
 		</div>
 	</nav>
-
-
-
-	<div class="container" style="padding-top: 20px">
-		<div class="card text-white  bg-dark">
+	<div class="container"
+		style="display: flex; align-items: center; justify-content: center; padding-top: 20px">
+		<div class="card text-white  bg-dark" style="width: 70%">
 			<div class="card-header bg-gradient">
 				<h1 class="display-1 text-center">Criar Teste</h1>
 			</div>
 			<div class="card-body ">
 				<div class="card-text">
 
-					<div class="container"
-						style="display: flex; align-items: center; justify-content: center;">
+
+					<div class="container">
+
+						<div class="offcanvas offcanvas-end" tabindex="-1"
+							id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+							<div class="offcanvas-header bg-gradient bg-dark">
+								<h5 id="offcanvasRightLabel">Informação</h5>
+								<button type="button" class="btn-close text-reset bg-secondary"
+									data-bs-dismiss="offcanvas" aria-label="Close"></button>
+							</div>
+							<div class="offcanvas-body bg-dark">
+								<div class="alert alert-info alert-dismissible fade show"
+									role="alert">
 
 
-						<div class="alert alert-primary alert-dismissible fade show"
-							role="alert">
+									<h4 class="alert-heading">Sobre a criação de testes:</h4>
+									<p>Testes são úteis nos seguintes casos:</p>
+									<ol>
+										<li>Quando a tarefa espera entradas dinâmicas a serem
+											preenchidas para poder prosseguir com a execução da mesma. E
+											espera alguma(s) saída(s) a ser/serem testada(s).</li>
+										<li>Quando a tafera não espera entradas dinâmicas, mas
+											espera alguma(s) saída(s) a ser/serem testada(s).</li>
+									</ol>
+									<hr>
+									<p class="mb-0">Ao criar um teste, o mesmo pode ou não
+										conter entrada(s).</p>
+									<hr>
+									<p class="mb-0">É obrigatório que contenha ao menos 1 saída
+										esperada para que o teste possa ser criado com sucesso. Caso
+										não precise de saída(s) esperada(s), não é necessário a
+										criação do teste.</p>
+									<hr>
+									<p class="mb-0">
+										<strong> Observação para o preenchimento das
+											entradas: </strong> Para cada "<em>enter</em>" digitado (quebra de
+										linha), significa que uma nova entrada será testada em
+										sequência das anteriores. Isto é, caso o campo "entrada(s)"
+										contenha 2(duas) linhas que foram separadas através de um "<em>enter</em>",
+										então o teste possuirá 2(duas) entradas totais. Lembre-se que
+										a ordem das entradas influenciará estritamente na execução do
+										teste.
+									</p>
+									<hr>
+									<p class="mb-0">Testes criados poderão ser inseridos
+										posteriormente em tarefas já existentes.</p>
 
 
-							<h4 class="alert-heading">Sobre a criação de testes:</h4>
-							<p>Testes são úteis nos seguintes casos:</p>
-							<ol>
-								<li>Quando a tarefa espera entradas dinâmicas a serem
-									preenchidas para poder prosseguir com a execução da mesma. E
-									espera alguma(s) saída(s) a ser/serem testada(s).</li>
-								<li>Quando a tafera não espera entradas dinâmicas, mas
-									espera alguma(s) saída(s) a ser/serem testada(s).</li>
-							</ol>
-							<hr>
-							<p class="mb-0">Ao criar um teste, o mesmo pode ou não conter
-								entrada(s).</p>
-							<hr>
-							<p class="mb-0">É obrigatório que contenha ao menos 1 saída
-								esperada para que o teste possa ser criado com sucesso. Caso não
-								precise de saída(s) esperada(s), não é necessário a criação do
-								teste.</p>
-							<hr>
-							<p class="mb-0">
-								<strong> Observação para o preenchimento das entradas:
-								</strong> Para cada "<em>enter</em>" digitado (quebra de linha),
-								significa uma nova entrada que será testada em sequência das
-								anteriores. Isto é, caso o campo "entrada(s)" contenha 2(duas)
-								linhas que foram separadas através de um "<em>enter</em>", então
-								o teste possuirá 2(duas) entradas totais. Lembre-se que a ordem
-								das entradas influenciará estritamente na execução do teste.
-							</p>
-							<hr>
-							<p class="mb-0">Testes criados poderão ser inseridos
-								posteriormente em tarefas já existentes.</p>
 
-
-							<button type="button" class="btn-close" data-bs-dismiss="alert"
-								aria-label="Close"></button>
+								</div>
+							</div>
 						</div>
+
+
 					</div>
 
 					<div class="container"
 						style="display: flex; align-items: center; justify-content: center;">
 						<form class="was-validated">
-
+							<div class="mb-3">
+								<label for="nome" class="col-sm-2 col-form-label fs-4"
+									th:text="'Nome'"></label>
+									<input class="form-control is-valid" id="nome" th:required="true"
+										></input>
+										<div class="invalid-feedback">Preencha o campo "Nome"</div>
+									</div>
+							
 							<div class="mb-3">
 								<label for="entradas" class="col-sm-2 col-form-label fs-4"
 									th:text="'Entrada(s)'"></label>
 								<div class="col-sm-12">
-									<textarea class="form-control" cols="100%" id="entradas"
-										rows="8"></textarea>
+									<textarea class="form-control" id="entradas" cols="100%" rows="4"
+										></textarea>
+										
 								</div>
 							</div>
 
@@ -107,13 +142,20 @@
 									th:text="'Saída(s)'"></label>
 								<div class="col-sm-12">
 									<textarea class="form-control is-valid" cols="100%" id="saidas"
-										rows="8" th:required="true"></textarea>
+										rows="4" th:required="true"></textarea>
 									<div class="invalid-feedback">Preencha o campo "Saída(s)"</div>
 								</div>
 							</div>
 							<div class="d-grid gap-2 d-md-flex justify-content-md-end">
-								<button class="btn btn-secondary bg-gradient me-md-2"
-									type="button">Voltar</button>
+								<a th:href="@{/home}">
+									<button class="btn btn-secondary bg-gradient me-md-2"
+										type="button">Voltar</button>
+								</a>
+								<button class="btn btn-info bg-gradient me-md-2" type="button"
+									data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight"
+									aria-controls="offcanvasRight">Informações sobre
+									Testes</button>
+
 								<button class="btn btn-success bg-gradient" type="submit">Criar</button>
 							</div>
 						</form>
@@ -132,11 +174,25 @@
 
 	</div>
 
+<nav aria-label="Toggle navigation" class="navbar fixed-bottom navbar-dark bg-dark">
+  <div class="container-fluid" style="align-items: center; justify-content: center;">
+    <a class="nav-link link-warning" href="https://github.com/thixvinix/codeTask">Github</a>
+  </div>
+</nav>
+
 
 	<script
-		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"></script>
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+		crossorigin="anonymous"></script>
 
-
+	<script type="text/javascript">
+		var offcanvasElementList = [].slice.call(document
+				.querySelectorAll('.offcanvas'))
+		var offcanvasList = offcanvasElementList.map(function(offcanvasEl) {
+			return new bootstrap.Offcanvas(offcanvasEl)
+		})
+	</script>
 
 </body>
 </html>

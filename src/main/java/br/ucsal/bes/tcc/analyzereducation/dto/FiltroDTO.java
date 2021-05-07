@@ -1,31 +1,21 @@
-package br.ucsal.bes.tcc.analyzereducation.model;
+package br.ucsal.bes.tcc.analyzereducation.dto;
 
 import br.ucsal.bes.tcc.analyzereducation.enums.IntervaloFiltroEnum;
 
-public class Filtro {
+public class FiltroDTO {
 
-	private Long id;
-
-	private String nomeFiltro;
+	private String titulo;
 
 	private Integer qtdDemandada;
-	
+
 	private IntervaloFiltroEnum intervalo;
 
-	public Long getId() {
-		return id;
+	public String getTitulo() {
+		return titulo;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getNomeFiltro() {
-		return nomeFiltro;
-	}
-
-	public void setNomeFiltro(String nomeFiltro) {
-		this.nomeFiltro = nomeFiltro;
+	public void setTitulo(String titulo) {
+		this.titulo = titulo;
 	}
 
 	public Integer getQtdDemandada() {

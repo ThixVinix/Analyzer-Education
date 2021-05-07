@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns:th="http://www.thymeleaf.org">
+<head>
+<link rel="shortcut icon" href="#">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<meta charset="UTF-8">
+<title>CodeTask</title>
+</head>
+<body style="background-color: rgb(0, 128, 192);">
+
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark" aria-label="Toggle navigation">
+		<div class="container-fluid">
+			<a class="navbar-brand fst-italic text-warning" th:href="@{/home}">CodeTask</a>
+			<button class="navbar-toggler" type="button"
+				data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+				aria-controls="navbarNavDropdown" aria-expanded="false"
+				aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarNavDropdown">
+				<ul class="navbar-nav">
+					<li class="nav-item"><a class="nav-link" aria-current="page"
+						th:href="@{/home}">Home</a></li>
+					<li class="nav-item dropdown"><a
+						class="nav-link dropdown-toggle" href="#"
+						id="navbarDropdownMenuLink" role="button"
+						data-bs-toggle="dropdown" aria-expanded="false"> Criar </a>
+						<ul class="dropdown-menu dropdown-menu-dark"
+							aria-labelledby="navbarDropdownMenuLink">
+							<li><a class="dropdown-item" th:href="@{/home/criarTarefa}">Tarefa</a></li>
+							<li><a class="dropdown-item" th:href="@{/home/criarTeste}">Teste</a></li>
+							<li><a class="dropdown-item" th:href="@{/home/criarFiltro}">Filtro</a></li>
+						</ul></li>
+					<li class="nav-item dropdown"><a
+						class="nav-link dropdown-toggle" href="#"
+						id="navbarDropdownMenuLink" role="button"
+						data-bs-toggle="dropdown" aria-expanded="false"> Visualizar </a>
+						<ul class="dropdown-menu dropdown-menu-dark"
+							aria-labelledby="navbarDropdownMenuLink">
+							<li><a class="dropdown-item" th:href="@{/home/tarefas}">Tarefas</a></li>
+							<li><a class="dropdown-item" th:href="@{/home/testes}">Testes</a></li>
+							<li><a class="dropdown-item" th:href="@{/home/filtros}">Filtros</a></li>
+						</ul></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<div class="container" style="padding-top: 20px;">
+		<div class="col-sm-12">
+			<div class="card bg-dark text-white text-center"
+				style="margin-bottom: 20px">
+				<div class="card-header">
+					<span class="card-title display-3 fst-italic text-warning">CodeTask</span>
+				</div>
+				<div class="card-body">
+
+					<div id="carouselExampleDark"
+						class="carousel carousel-white slide carousel-fade"
+						data-bs-ride="carousel">
+						<div class="carousel-indicators">
+							<button type="button" data-bs-target="#carouselExampleDark"
+								data-bs-slide-to="0" class="active" aria-current="true"
+								aria-label="Slide 1"></button>
+							<button type="button" data-bs-target="#carouselExampleDark"
+								data-bs-slide-to="1" aria-label="Slide 2"></button>
+							<button type="button" data-bs-target="#carouselExampleDark"
+								data-bs-slide-to="2" aria-label="Slide 3"></button>
+						</div>
+						<div class="carousel-inner">
+							<div class="carousel-item active" data-bs-interval="10000">
+								<img src="/static/imgs/task.png" class="d-block w-100" alt="...">
+								<div class="carousel-caption d-none d-md-block ">
+									<h5>Tarefas</h5>
+									<p class="font-monospace">Crie tarefas para por em prática
+										suas habilidades em programação.</p>
+								</div>
+							</div>
+							<div class="carousel-item" data-bs-interval="2000">
+								<img src="/static/imgs/test.jpg" class="d-block w-100" alt="...">
+								<div class="carousel-caption d-none d-md-block">
+									<h5>Testes</h5>
+									<p class="font-monospace">Adicione testes dinâmicos e
+										automatizados para as tarefas criadas</p>
+								</div>
+							</div>
+							<div class="carousel-item">
+								<img src="/static/imgs/filter.jpg" class="d-block w-100"
+									alt="...">
+								<div class="carousel-caption d-none d-md-block">
+									<h5>Filtros</h5>
+									<p class="font-monospace">Adicione filtros nas tarefas para
+										identificar a utilização das premissas</p>
+								</div>
+							</div>
+						</div>
+						<button class="carousel-control-prev" type="button"
+							data-bs-target="#carouselExampleDark" data-bs-slide="prev">
+							<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+							<span class="visually-hidden">Previous</span>
+						</button>
+						<button class="carousel-control-next" type="button"
+							data-bs-target="#carouselExampleDark" data-bs-slide="next">
+							<span class="carousel-control-next-icon" aria-hidden="true"></span>
+							<span class="visually-hidden">Next</span>
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="row" style="align-items: center; justify-content: center;">
+			<div class="col-sm-6">
+				<div class="card bg-dark text-white text-center"
+					style="margin-bottom: 20px">
+					<div class="card-header bg-gradient">
+						<h5 class="card-title">Criar</h5>
+					</div>
+					<div class="card-body">
+						<p class="card-text lead">Crie tarefas, testes ou filtros.</p>
+
+						<div class="btn-group btn-group-lg" role="group" aria-label="...">
+							<a th:href="@{/home/criarTarefa}" class="btn btn-outline-success">Tarefa</a>
+							<a th:href="@{/home/criarTeste}" class="btn btn-outline-success">Teste</a>
+							<a th:href="@{/home/criarFiltro}" class="btn btn-outline-success">Filtro</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="card bg-dark text-white text-center"
+					style="margin-bottom: 20px">
+					<div class="card-header bg-gradient">
+						<h5 class="card-title">Visualizar</h5>
+					</div>
+					<div class="card-body">
+						<p class="card-text lead">Visualize tarefas, testes ou
+							filtros.</p>
+
+						<div class="btn-group btn-group-lg" role="group" aria-label="...">
+							<a th:href="@{/home/tarefas}" class="btn btn-outline-info">Tarefas</a>
+							<a th:href="@{/home/testes}" class="btn btn-outline-info">Testes</a>
+							<a th:href="@{/home/filtros}" class="btn btn-outline-info">Filtros</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+<nav aria-label="Toggle navigation" class="navbar fixed-bottom navbar-dark bg-dark">
+  <div class="container-fluid" style="align-items: center; justify-content: center;">
+    <a class="nav-link link-warning" href="https://github.com/thixvinix/codeTask">Github</a>
+  </div>
+</nav>
+
+
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+		crossorigin="anonymous"></script>
+
+	<script type="text/javascript">
+		var myCarousel = document.querySelector('#carouselExampleDark')
+		var carousel = new bootstrap.Carousel(myCarousel)
+	</script>
+</body>
+</html>

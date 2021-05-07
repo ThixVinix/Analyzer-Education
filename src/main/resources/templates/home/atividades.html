@@ -17,22 +17,40 @@
 <body style="background-color: teal;">
 
 
-	<nav class="navbar navbar-expand-lg navbar-dark bg-dark navbar">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 		<div class="container-fluid">
-			<a class="navbar-brand" href="#">CodeTask</a>
+			<a class="navbar-brand fst-italic text-warning" th:href="@{/home}">CodeTask</a>
 			<button class="navbar-toggler" type="button"
-				data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
-				aria-controls="navbarNavAltMarkup" aria-expanded="false"
+				data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+				aria-controls="navbarNavDropdown" aria-expanded="false"
 				aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
-			<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-				<div class="navbar-nav">
-					<a class="nav-link active" aria-current="page" href="#">Home</a> <a
-						class="nav-link" href="#">Visualizar Atividades</a> <a class="nav-link"
-						href="#">Criar Atividade</a> <a class="nav-link disabled" href="#"
-						tabindex="-1" aria-disabled="true">Disabled</a>
-				</div>
+			<div class="collapse navbar-collapse" id="navbarNavDropdown">
+				<ul class="navbar-nav">
+					<li class="nav-item"><a class="nav-link" aria-current="page"
+						th:href="@{/home}">Home</a></li>
+					<li class="nav-item dropdown"><a
+						class="nav-link dropdown-toggle" href="#"
+						id="navbarDropdownMenuLink" role="button"
+						data-bs-toggle="dropdown" aria-expanded="false"> Criar </a>
+						<ul class="dropdown-menu dropdown-menu-dark"
+							aria-labelledby="navbarDropdownMenuLink">
+							<li><a class="dropdown-item" th:href="@{/home/criarTarefa}">Tarefa</a></li>
+							<li><a class="dropdown-item" th:href="@{/home/criarTeste}">Teste</a></li>
+							<li><a class="dropdown-item" th:href="@{/home/criarFiltro}">Filtro</a></li>
+						</ul></li>
+					<li class="nav-item dropdown"><a
+						class="nav-link dropdown-toggle" href="#"
+						id="navbarDropdownMenuLink" role="button"
+						data-bs-toggle="dropdown" aria-expanded="false"> Visualizar </a>
+						<ul class="dropdown-menu dropdown-menu-dark"
+							aria-labelledby="navbarDropdownMenuLink">
+							<li><a class="dropdown-item" th:href="@{/home/tarefas}">Tarefas</a></li>
+							<li><a class="dropdown-item" th:href="@{/home/testes}">Testes</a></li>
+							<li><a class="dropdown-item" th:href="@{/home/filtros}">Filtros</a></li>
+						</ul></li>
+				</ul>
 			</div>
 		</div>
 	</nav>
@@ -61,7 +79,6 @@
 							<td><span th:text="${atividade.titulo}"></span></td>
 							<td><span th:text="${atividade.descricao}"></span></td>
 							<td><span th:text="${atividade.concluido}"></span></td>
-						<!-- <a href="details.html" th:href="@{/order/details(orderId=${o.id})}">view</a> -->
 							<td><a  th:href="@{/home/tarefas/}" href="/home/tarefas"><button
 										class="btn btn-outline-secondary my-2 my-sm-0">Visualizar
 										Tarefas</button></a></td>
@@ -71,6 +88,13 @@
 			</div>
 		</div>
 	</div>
+	
+	<nav aria-label="Toggle navigation" class="navbar fixed-bottom navbar-dark bg-dark">
+  <div class="container-fluid" style="align-items: center; justify-content: center;">
+    <a class="nav-link link-warning" href="https://github.com/thixvinix/codeTask">Github</a>
+  </div>
+</nav>
+	
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"></script>
 

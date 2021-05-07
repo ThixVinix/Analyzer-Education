@@ -361,8 +361,37 @@ public abstract class AbstractArquivoMetrica {
 		boolean isCorrect = false;
 
 		if (filtro.getQtdDemandada() != null) {
-			if (qtdUtilizada == filtro.getQtdDemandada()) {
-				isCorrect = true;
+
+			switch (filtro.getIntervalo()) {
+			case IGUAL:
+				if (qtdUtilizada == filtro.getQtdDemandada())
+					isCorrect = true;
+
+				break;
+			case MAIOR_IGUAL:
+				if (qtdUtilizada >= filtro.getQtdDemandada())
+					isCorrect = true;
+
+				break;
+			case MENOR_IGUAL:
+				if (qtdUtilizada <= filtro.getQtdDemandada())
+					isCorrect = true;
+
+				break;
+			case MAIOR:
+				if (qtdUtilizada > filtro.getQtdDemandada())
+					isCorrect = true;
+
+				break;
+			case MENOR:
+				if (qtdUtilizada < filtro.getQtdDemandada())
+					isCorrect = true;
+
+				break;
+			default:
+				if (qtdUtilizada > 0) {
+					isCorrect = true;
+				}
 			}
 		} else {
 			if (qtdUtilizada > 0) {
