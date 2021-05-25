@@ -4,9 +4,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -16,7 +14,6 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.StringTokenizer;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -144,7 +141,7 @@ public class JavaCode extends AbstractArquivoMetrica {
 
 		String line;
 
-		String message = String.format(MESSAGE_STARTED_ANALYZE, arquivo.getName());
+		var message = String.format(MESSAGE_STARTED_ANALYZE, arquivo.getName());
 		LOGGER.info(message);
 
 		while ((line = arquivoReader.readLine()) != null) {
@@ -164,7 +161,7 @@ public class JavaCode extends AbstractArquivoMetrica {
 
 		if (listaFiltros != null && !listaFiltros.isEmpty()) {
 			for (Filtro filtro : listaFiltros) {
-				String mFilter = String.format("Iniciando verificação do filtro \"%s\"...", filtro.getNomeFiltro());
+				var mFilter = String.format("Iniciando verificação do filtro \"%s\"...", filtro.getNomeFiltro());
 				LOGGER.info(mFilter);
 				result.getMapResultFilter().put(filtro, verificarUtilizacaoFiltro(filtro));
 				LOGGER.info("Verificação efetuada.");
@@ -214,6 +211,7 @@ public class JavaCode extends AbstractArquivoMetrica {
 
 		if (arquivoPrincipal != null) {
 			String nomeArquivo = arquivoPrincipal.obterNomeArquivo();
+			
 			// First stage - Compile
 			output.append(compilar(DIRETORIO, "javac", nomeArquivo));
 
@@ -229,7 +227,6 @@ public class JavaCode extends AbstractArquivoMetrica {
 						result.getMapResultTest().put(teste, resultadoComTeste);
 						result.getSaidasObtidas().add(output.toString());
 						output = new StringBuilder();
-
 					}
 
 				} else {
@@ -269,7 +266,7 @@ public class JavaCode extends AbstractArquivoMetrica {
 				if (!mapArquivoAlvo.getValue().exists()) {
 					renomearArquivoAlvo(mapArquivoAlvo);
 				} else {
-					String message = String.format(Constante.ARQUIVO_EXISTENTE, mapArquivoAlvo.getValue());
+					var message = String.format(Constante.ARQUIVO_EXISTENTE, mapArquivoAlvo.getValue());
 					LOGGER.warn(message);
 					DirectoryUtil.deletarArquivo(mapArquivoAlvo.getValue().toPath());
 					renomearArquivoAlvo(mapArquivoAlvo);
@@ -291,9 +288,9 @@ public class JavaCode extends AbstractArquivoMetrica {
 
 	private void verificarArquivosPrincipais(Entry<ArquivoMetrica, File> mapArquivoAlvo) {
 
-		boolean contemMetodoMain = false;
+		var contemMetodoMain = false;
 		String conteudo = mapArquivoAlvo.getKey().getConteudoCompactado();
-		StringTokenizer st = new StringTokenizer(conteudo, Constante.QUEBRA_LINHA);
+		var st = new StringTokenizer(conteudo, Constante.QUEBRA_LINHA);
 		while (st.hasMoreTokens()) {
 			String line = st.nextToken();
 			contemMetodoMain = verificarMetodoMain(line);
@@ -311,8 +308,8 @@ public class JavaCode extends AbstractArquivoMetrica {
 	private boolean verificarMetodoMain(String line) {
 
 		try {
-			Pattern padrao = Pattern.compile(Constante.REGEX_METODO_MAIN);
-			Matcher encontrador = padrao.matcher(line.trim());
+			var padrao = Pattern.compile(Constante.REGEX_METODO_MAIN);
+			var encontrador = padrao.matcher(line.trim());
 			while (encontrador.find()) {
 				return true;
 			}
@@ -326,18 +323,16 @@ public class JavaCode extends AbstractArquivoMetrica {
 
 	public static String compilar(String path, String comando, String arquivo) {
 
-		StringBuilder sb = new StringBuilder();
-
-		ProcessBuilder builder = new ProcessBuilder(comando, arquivo);
+		var sb = new StringBuilder();
+		var builder = new ProcessBuilder(comando, arquivo);
 
 		builder.directory(new File(path));
 		Process process;
 		try {
 			process = builder.start();
 
-			BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
-			BufferedReader error = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+			var reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			var error = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 
 			String line;
 			while ((line = reader.readLine()) != null) {
@@ -366,21 +361,21 @@ public class JavaCode extends AbstractArquivoMetrica {
 	public ResultadoTeste executarComTeste(String path, String comando, String arquivo, String entrada, String saida)
 			throws IOException {
 
-		ProcessBuilder builder = new ProcessBuilder(comando, arquivo);
+		var builder = new ProcessBuilder(comando, arquivo);
 		builder.directory(new File(path));
 		builder.redirectErrorStream(true);
-		Process process = builder.start();
+		var process = builder.start();
 
-		OutputStream stdin = process.getOutputStream();
-		InputStream stdout = process.getInputStream();
+		var stdin = process.getOutputStream();
+		var stdout = process.getInputStream();
 
-		BufferedReader reader = new BufferedReader(new InputStreamReader(stdout));
+//		var reader = new BufferedReader(new InputStreamReader(stdout));
+//		var error = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 
-		BufferedReader error = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+		var writer = new BufferedWriter(new OutputStreamWriter(stdin));
+		var isFirstLine = true;
+		var st = new StringTokenizer(entrada, Constante.QUEBRA_LINHA);
 
-		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(stdin));
-		boolean isFirstLine = true;
-		StringTokenizer st = new StringTokenizer(entrada, Constante.QUEBRA_LINHA);
 		while (st.hasMoreTokens()) {
 			String line = st.nextToken();
 			if (isFirstLine) {
@@ -394,8 +389,8 @@ public class JavaCode extends AbstractArquivoMetrica {
 		writer.flush();
 		writer.close();
 
-		Scanner scanner = new Scanner(stdout);
-		StringBuilder resposta = new StringBuilder();
+		var scanner = new Scanner(stdout);
+		var resposta = new StringBuilder();
 		isFirstLine = true;
 		while (scanner.hasNextLine()) {
 			if (isFirstLine) {
@@ -412,7 +407,7 @@ public class JavaCode extends AbstractArquivoMetrica {
 
 		boolean isCorrect = resposta.toString().equals(saida);
 
-		ResultadoTeste rTest = new ResultadoTeste();
+		var rTest = new ResultadoTeste();
 
 		rTest.setSaidaObtida(resposta.toString());
 		rTest.setCorrect(isCorrect);
@@ -422,18 +417,18 @@ public class JavaCode extends AbstractArquivoMetrica {
 
 	public void executarSemTeste(String path, String comando, String arquivo) throws IOException {
 
-		StringBuilder sb = new StringBuilder();
+		var sb = new StringBuilder();
 
-		ProcessBuilder builder = new ProcessBuilder(comando, arquivo);
+		var builder = new ProcessBuilder(comando, arquivo);
 
 		builder.directory(new File(path));
 		Process process;
 
 		process = builder.start();
 
-		BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+		var reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
-		BufferedReader error = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+		var error = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 
 		String line;
 		while ((line = reader.readLine()) != null) {

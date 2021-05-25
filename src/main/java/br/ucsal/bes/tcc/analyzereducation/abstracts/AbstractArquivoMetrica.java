@@ -308,14 +308,14 @@ public abstract class AbstractArquivoMetrica {
 
 	public ResultadoFiltro verificarUtilizacaoFiltro(Filtro filtro) {
 
-		String conteudoString = conteudoCompactado.toString();
-		StringTokenizer st = new StringTokenizer(conteudoString, Constante.QUEBRA_LINHA);
+		var conteudoString = conteudoCompactado.toString();
+		var st = new StringTokenizer(conteudoString, Constante.QUEBRA_LINHA);
 		int countAspas = Constante.NUMBER_ZERO_INT;
-		boolean isString = false;
+		var isString = false;
 
-		int indiceFiltroInicial = 0;
+		var indiceFiltroInicial = 0;
 
-		int qtdUtilizada = 0;
+		var qtdUtilizada = 0;
 
 		while (st.hasMoreTokens()) {
 			String line = st.nextToken().trim();
@@ -328,7 +328,7 @@ public abstract class AbstractArquivoMetrica {
 					indiceFiltroInicial = line.indexOf(filtro.getNomeFiltro());
 				}
 
-				for (int i = 0; i < line.length(); i++) {
+				for (var i = 0; i < line.length(); i++) {
 
 					if (line.charAt(i) == Constante.ASPAS_DUPLAS && countAspas == 1
 							&& line.charAt(i - 1) != Constante.BARRA_INVERTIDA) {
@@ -358,45 +358,37 @@ public abstract class AbstractArquivoMetrica {
 
 		}
 
-		boolean isCorrect = false;
+		var isCorrect = false;
 
 		if (filtro.getQtdDemandada() != null) {
-
 			switch (filtro.getIntervalo()) {
 			case IGUAL:
 				if (qtdUtilizada == filtro.getQtdDemandada())
 					isCorrect = true;
-
 				break;
 			case MAIOR_IGUAL:
 				if (qtdUtilizada >= filtro.getQtdDemandada())
 					isCorrect = true;
-
 				break;
 			case MENOR_IGUAL:
 				if (qtdUtilizada <= filtro.getQtdDemandada())
 					isCorrect = true;
-
 				break;
 			case MAIOR:
 				if (qtdUtilizada > filtro.getQtdDemandada())
 					isCorrect = true;
-
 				break;
 			case MENOR:
 				if (qtdUtilizada < filtro.getQtdDemandada())
 					isCorrect = true;
-
 				break;
 			default:
-				if (qtdUtilizada > 0) {
+				if (qtdUtilizada > 0) 
 					isCorrect = true;
-				}
 			}
 		} else {
-			if (qtdUtilizada > 0) {
+			if (qtdUtilizada > 0) 
 				isCorrect = true;
-			}
 		}
 
 		return new ResultadoFiltro(qtdUtilizada, isCorrect);

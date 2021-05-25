@@ -55,7 +55,7 @@
 		style="display: flex; align-items: center; justify-content: center; padding-top: 20px">
 		<div class="card text-white  bg-dark" style="width: 70%">
 			<div class="card-header bg-gradient">
-				<h1 class="display-1 text-center">Criar Teste</h1>
+				<h1 class="display-1 text-center">Editar Teste</h1>
 			</div>
 			<div class="card-body ">
 				<div class="card-text">
@@ -113,9 +113,10 @@
 
 					<div class="container"
 						style="display: flex; align-items: center; justify-content: center;">
-						<form th:object="${testeDTO}" th:action="@{/home/novoTeste}" method="post" class="was-validated">
+						<form th:object="${testeDTO}" th:action="@{/home/testes/editado}" method="post" class="was-validated">
 						
 						<input th:field="*{codgTarefa}" type="hidden" th:value="${testeDTO.codgTarefa}">  
+						<input th:field="*{id}" type="hidden" th:value="${testeDTO.id}">  
 						
 							<div class="mb-3">
 								<label for="nome" class="col-sm-2 col-form-label fs-4"
@@ -145,7 +146,7 @@
 								</div>
 							</div>
 							<div class="d-grid gap-2 d-md-flex justify-content-md-end">
-								<a th:href="@{/home/tarefas}">
+								<a th:href="@{/home/testes(tarefaId=*{codgTarefa})}">
 									<button class="btn btn-secondary bg-gradient me-md-2"
 										type="button">Voltar</button>
 								</a>
@@ -154,7 +155,7 @@
 									aria-controls="offcanvasRight">Informações sobre
 									Testes</button>
 
-								<button class="btn btn-success bg-gradient" type="submit">Criar</button>
+								<button class="btn btn-success bg-gradient" type="submit">Editar</button>
 							</div>
 						</form>
 					</div>

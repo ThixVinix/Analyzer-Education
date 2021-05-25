@@ -1,5 +1,7 @@
 package br.ucsal.bes.tcc.analyzereducation.util;
 
+import java.util.Optional;
+import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -396,6 +398,32 @@ public class Util {
 			return "";
 		}
 		return pParametro.trim().toLowerCase();
+	}
+
+	public static Optional<StringBuilder> removeLeadingAndTrailing(String text) {
+
+		if (text == null || text.isEmpty() || text.isBlank())
+			return Optional.empty();
+
+		var isFirstLine = true;
+		var st = new StringTokenizer(text, Constante.QUEBRA_LINHA);
+		var sb = new StringBuilder();
+
+		while (st.hasMoreTokens()) {
+			String line = st.nextToken();
+			
+			if (line.isEmpty() || line.isBlank()) 
+				continue;
+			
+			if (isFirstLine) {
+				sb.append(line.trim());
+				isFirstLine = false;
+			} else {
+				sb.append(Constante.QUEBRA_LINHA + line.trim());
+			}
+		}
+
+		return Optional.of(sb);
 	}
 
 }

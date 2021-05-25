@@ -2,6 +2,7 @@ package br.ucsal.bes.tcc.analyzereducation.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import br.ucsal.bes.tcc.analyzereducation.enums.IntervaloFiltroEnum;
 import br.ucsal.bes.tcc.analyzereducation.model.Filtro;
@@ -13,7 +14,7 @@ public class BancoDeDados {
 	private static List<Tarefa> tarefas = new ArrayList<>();
 
 	private static List<Teste> testes = new ArrayList<>();
-	
+
 	private static List<Filtro> filtros = new ArrayList<>();
 
 	static {
@@ -89,7 +90,7 @@ public class BancoDeDados {
 		testes.add(teste2);
 		testes.add(teste3);
 		testes.add(teste4);
-		
+
 		filtros.add(filtro1);
 		filtros.add(filtro2);
 		filtros.add(filtro3);
@@ -107,25 +108,101 @@ public class BancoDeDados {
 		return tarefas.get(id.intValue());
 
 	}
-	
+
+	public static void adicionarTarefa(Tarefa tarefa) {
+		tarefas.add(tarefa);
+	}
+
+	public static void alterarTarefa(Tarefa tarefa) {
+		for (var i = 0; i < tarefas.size(); i++) {
+			if (tarefas.get(i).getId().equals(tarefa.getId())) {
+				tarefas.get(i).setTitulo(tarefa.getTitulo());
+				tarefas.get(i).setDescricao(tarefa.getDescricao());
+				break;
+			}
+		}
+	}
+
+	public static void deletarTarefa(Long id) {
+		for (Tarefa tarefa : tarefas) {
+			if (tarefa.getId().equals(id)) {
+				tarefas.remove(tarefa);
+				break;
+			}
+		}
+
+//	 tarefas.stream().filter((Tarefa tarefa) -> tarefa.getId().equals(id))
+//	 				 .map(tarefa -> tarefas.remove(tarefa)).findAny();
+	}
+
 	public static List<Teste> obterTestes() {
 		return testes;
 	}
-	
+
 	public static Teste obterTeste(Long id) {
 
-		return testes.get(id.intValue());
+		return testes.get(id.intValue() -1);
 
 	}
-	
+
+	public static void adicionarTeste(Teste teste) {
+		testes.add(teste);
+	}
+
+	public static void alterarTeste(Teste teste) {
+		for (var i = 0; i < testes.size(); i++) {
+			if (testes.get(i).getId().equals(teste.getId())) {
+				testes.get(i).setNome(teste.getNome());
+				testes.get(i).setEntradas(teste.getEntradas());
+				testes.get(i).setSaidas(teste.getSaidas());
+				break;
+			}
+		}
+	}
+
+	public static void deletarTeste(Long id) {
+		for (Teste teste : testes) {
+			if (teste.getId().equals(id)) {
+				testes.remove(teste);
+				break;
+			}
+		}
+	}
+
 	public static List<Filtro> obterFiltros() {
 		return filtros;
 	}
-	
+
 	public static Filtro obterFiltro(Long id) {
 
 		return filtros.get(id.intValue());
 
 	}
+	
+	public static void adicionarFiltro(Filtro filtro) {
+		filtros.add(filtro);
+	}
+	
+	public static void alterarFiltro(Filtro filtro) {
+		for (var i = 0; i < filtros.size(); i++) {
+			if (filtros.get(i).getId().equals(filtro.getId())) {
+				filtros.get(i).setNomeFiltro(filtro.getNomeFiltro());
+				filtros.get(i).setIntervalo(filtro.getIntervalo());
+				filtros.get(i).setQtdDemandada(filtro.getQtdDemandada());
+				break;
+			}
+		}
+	}
+
+	public static void deletarFiltro(Long id) {
+		for (Filtro filtro : filtros) {
+			if (filtro.getId().equals(id)) {
+				filtros.remove(filtro);
+				break;
+			}
+		}
+	}
+
+
 
 }

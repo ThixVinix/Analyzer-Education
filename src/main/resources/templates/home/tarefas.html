@@ -8,7 +8,7 @@
 	integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
 	crossorigin="anonymous">
 <link rel="stylesheet" th:href="@{/static/css/editor-styles.css}">
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <meta charset="UTF-8">
@@ -18,7 +18,8 @@
 </head>
 <body style="background-color: rgb(0, 128, 192);">
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark"
+		aria-label="Toggle navigation">
 		<div class="container-fluid">
 			<a class="navbar-brand fst-italic text-warning" th:href="@{/home}">CodeTask</a>
 			<button class="navbar-toggler" type="button"
@@ -37,19 +38,26 @@
 						data-bs-toggle="dropdown" aria-expanded="false"> Criar </a>
 						<ul class="dropdown-menu dropdown-menu-dark"
 							aria-labelledby="navbarDropdownMenuLink">
-							<li><a class="dropdown-item" th:href="@{/home/criarTarefa}">Tarefa</a></li>
-							<li><a class="dropdown-item" th:href="@{/home/criarTeste}">Teste</a></li>
-							<li><a class="dropdown-item" th:href="@{/home/criarFiltro}">Filtro</a></li>
+							<li><a class="dropdown-item" th:href="@{/home/criarTarefa}"
+								th:text="Tarefa"></a></li>
+							<li><a class="dropdown-item" th:href="@{/home/criarTeste}"
+								th:text="Teste"></a></li>
+							<li><a class="dropdown-item" th:href="@{/home/criarFiltro}"
+								th:text="Filtro"></a></li>
 						</ul></li>
 					<li class="nav-item dropdown"><a
 						class="nav-link dropdown-toggle" href="#"
 						id="navbarDropdownMenuLink" role="button"
-						data-bs-toggle="dropdown" aria-expanded="false"> Visualizar </a>
+						data-bs-toggle="dropdown" aria-expanded="false"
+						th:text="Visualizar"></a>
 						<ul class="dropdown-menu dropdown-menu-dark"
 							aria-labelledby="navbarDropdownMenuLink">
-							<li><a class="dropdown-item" th:href="@{/home/tarefas}">Tarefas</a></li>
-							<li><a class="dropdown-item" th:href="@{/home/testes}">Testes</a></li>
-							<li><a class="dropdown-item" th:href="@{/home/filtros}">Filtros</a></li>
+							<li><a class="dropdown-item" th:href="@{/home/tarefas}"
+								th:text="Tarefas"></a></li>
+							<li><a class="dropdown-item" th:href="@{/home/testes}"
+								th:text="Testes"></a></li>
+							<li><a class="dropdown-item" th:href="@{/home/filtros}"
+								th:text="Filtros"></a></li>
 						</ul></li>
 				</ul>
 			</div>
@@ -75,35 +83,65 @@
 									<th scope="col">id</th>
 									<th scope="col">Título</th>
 									<th scope="col">Descrição</th>
-									<th scope="col">Opções</th>
+									<th scope="col">Testes</th>
+									<th scope="col">Premissas</th>
+									<th scope="col">Opções da Tarefa</th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr th:each="tarefa : ${tarefas}">
+								<tr th:each="tarefa : ${tarefaDTO.tarefas}">
 									<th scope="row"><span th:text="${tarefa.id}"></span></th>
 									<td><span th:text="${tarefa.titulo}"></span></td>
 									<td>
-										<button type="button" class="btn btn-outline-dark"
+										<button type="button" class="btn btn-outline-dark btn-sm bi bi-search"
 											data-bs-toggle="popover" title="Descrição da Tarefa"
 											th:attr="data-bs-content=${tarefa.descricao}"
-											data-bs-placement="bottom">Visualizar Descrição</button> </span>
+											data-bs-placement="bottom"
+											th:text="' ' + Visualizar + ' ' + Descrição"></button>
 									</td>
-									<td><a
+											
+									<td>
+																<a
+										th:href="@{/home/testes(tarefaId=${tarefa.id})}"><button
+												class="btn btn-outline-dark btn-sm bi bi-search"
+												th:text="' ' + Visualizar + ' ' + Testes"></button></a>
+									</td>
+									
+																	<td>
+																<a
+										th:href="@{/home/premissas(tarefaId=${tarefa.id})}"><button
+												class="btn btn-outline-dark btn-sm bi bi-search"
+												th:text="' ' + Visualizar + ' ' + Premissas"></button></a>
+									</td>
+									
+									<td> <a
+										th:href="@{/home/tarefas/editarTarefa(tarefaId=${tarefa.id})}">
+											<button type="button" class="btn btn-warning btn-sm bi bi-pencil"
+												th:text="' ' + Editar"></button>
+									</a> <a th:href="@{/home/tarefas/excluir/{id}(id=${tarefa.id})}">
+											<button type="button" class="btn btn-danger btn-sm bi bi-trash2"
+												th:text="' ' + Deletar"></button>
+									</a>
+									
+									<a
 										th:href="@{/home/usereditor(tarefaId=${tarefa.id})}"><button
-												class="btn btn-dark bg-gradient my-2 my-sm-0">Iniciar
-												Tarefa</button></a></td>
+												class="btn btn-dark btn-sm bi bi-journal-code"
+												th:text="' ' + Iniciar + ' ' + Tarefa"></button></a>
+									</td>
+
 								</tr>
 							</tbody>
 						</table>
 
 						<div class="d-grid gap-2 d-md-flex justify-content-md-center">
 							<a th:href="@{/home}">
-								<button class="btn btn-secondary bg-gradient me-md-2"
-									type="button">Voltar</button>
+								<button class="btn btn-secondary bg-gradient me-md-2 bi bi-arrow-left-short"
+									type="button" th:text="' ' + Voltar"></button>
 							</a> <a th:href="@{/home/criarTarefa}">
-								<button class="btn btn-success bg-gradient">Criar nova
-									tarefa</button>
+								<button class="btn btn-success bg-gradient bi bi-file-earmark-plus"
+									th:text="' ' + Criar + ' ' + nova + ' ' + tarefa"></button>
 							</a>
+
 						</div>
 
 					</div>
@@ -113,11 +151,14 @@
 		</div>
 	</div>
 
-<nav aria-label="Toggle navigation" class="navbar fixed-bottom navbar-dark bg-dark">
-  <div class="container-fluid" style="align-items: center; justify-content: center;">
-    <a class="nav-link link-warning" href="https://github.com/thixvinix/codeTask">Github</a>
-  </div>
-</nav>
+	<nav aria-label="Toggle navigation"
+		class="navbar fixed-bottom navbar-dark bg-dark">
+		<div class="container-fluid"
+			style="align-items: center; justify-content: center;">
+			<a class="nav-link link-warning"
+				href="https://github.com/thixvinix/codeTask">Github</a>
+		</div>
+	</nav>
 
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"

@@ -104,8 +104,8 @@ public class UserEditorController {
 		} else {
 			int j = 1;
 			for (int i = 0; i < resultado.getSaidasObtidas().size(); i++) {
-				String str = "--------------------------------------------------------------------Resultado da execução #"
-						+ j + ":--------------------------------------------------------------------";
+				String str = "--------------------------------------------------------------------[Resultado da execução #"
+						+ j + "]--------------------------------------------------------------------";
 				String saida = resultado.getSaidasObtidas().get(i);
 				sb.append(str + Constante.QUEBRA_LINHA);
 				sb.append(saida + Constante.QUEBRA_LINHA);

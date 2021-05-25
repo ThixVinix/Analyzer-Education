@@ -52,13 +52,13 @@
 		style="display: flex; align-items: center; justify-content: center; padding-top: 20px">
 		<div class="card text-white  bg-dark" style="width: 70%">
 			<div class="card-header bg-gradient">
-				<h1 class="display-1 text-center">Criar Filtro</h1>
+				<h1 class="display-1 text-center">Criar Premissa</h1>
 			</div>
 			<div class="card-body ">
 				<div class="card-text">
 					<div class="container"
 						style="align-items: center; justify-content: center; margin-left: -10px">
-						<form th:object="${filtroDTO}" th:action="@{/home/novo2}"
+						<form th:object="${filtroDTO}" th:action="@{/home/novaPremissa}"
 							method="post" class="was-validated">
 							<div class="mb-3 ">
 								<div class="form-check">
@@ -98,7 +98,7 @@
 
 
 							<div class="d-grid gap-2 d-md-flex justify-content-md-end">
-								<a th:href="@{/home}">
+								<a th:href="@{/home/tarefas}">
 								<button class="btn btn-secondary bg-gradient me-md-2"
 									type="button">Voltar</button>
 									</a>
