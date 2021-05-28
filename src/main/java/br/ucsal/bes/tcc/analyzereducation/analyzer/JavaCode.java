@@ -23,7 +23,7 @@ import org.apache.logging.log4j.Logger;
 import br.ucsal.bes.tcc.analyzereducation.abstracts.AbstractArquivoMetrica;
 import br.ucsal.bes.tcc.analyzereducation.enums.ValidacaoArquivoEnum;
 import br.ucsal.bes.tcc.analyzereducation.model.ArquivoMetrica;
-import br.ucsal.bes.tcc.analyzereducation.model.Filtro;
+import br.ucsal.bes.tcc.analyzereducation.model.Premissa;
 import br.ucsal.bes.tcc.analyzereducation.model.Resultado;
 import br.ucsal.bes.tcc.analyzereducation.model.ResultadoTeste;
 import br.ucsal.bes.tcc.analyzereducation.model.Tarefa;
@@ -112,7 +112,7 @@ public class JavaCode extends AbstractArquivoMetrica {
 		return ValidacaoArquivoEnum.SUCESSO;
 	}
 
-	public Optional<ArquivoMetrica> iniciarAnalise(File arquivo, List<Filtro> listaFiltros, Integer limiteMinMetodoDeus,
+	public Optional<ArquivoMetrica> iniciarAnalise(File arquivo, List<Premissa> listaFiltros, Integer limiteMinMetodoDeus,
 			Integer limiteMinClasseDeus) throws IOException {
 
 		ArquivoMetrica arqMetric = null;
@@ -160,7 +160,7 @@ public class JavaCode extends AbstractArquivoMetrica {
 		LOGGER.info("Análise de classes deusas finalizada.");
 
 		if (listaFiltros != null && !listaFiltros.isEmpty()) {
-			for (Filtro filtro : listaFiltros) {
+			for (Premissa filtro : listaFiltros) {
 				var mFilter = String.format("Iniciando verificação do filtro \"%s\"...", filtro.getNomeFiltro());
 				LOGGER.info(mFilter);
 				result.getMapResultFilter().put(filtro, verificarUtilizacaoFiltro(filtro));

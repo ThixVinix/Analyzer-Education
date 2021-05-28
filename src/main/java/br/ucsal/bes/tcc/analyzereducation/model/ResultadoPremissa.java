@@ -1,12 +1,12 @@
 package br.ucsal.bes.tcc.analyzereducation.model;
 
-public class ResultadoFiltro {
+public class ResultadoPremissa {
 
 	private Integer qtdUtilizacoes;
 	
 	private Boolean usedCorrectly;
 
-	public ResultadoFiltro(Integer qtdUtilizacoes, Boolean usedCorrectly) {
+	public ResultadoPremissa(Integer qtdUtilizacoes, Boolean usedCorrectly) {
 		super();
 		this.qtdUtilizacoes = qtdUtilizacoes;
 		this.usedCorrectly = usedCorrectly;

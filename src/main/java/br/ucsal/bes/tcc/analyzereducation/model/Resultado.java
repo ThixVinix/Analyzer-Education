@@ -17,7 +17,7 @@ public class Resultado {
 	
 	private Map<Teste, ResultadoTeste> mapResultTest;
 	
-	private Map<Filtro, ResultadoFiltro> mapResultFilter;
+	private Map<Premissa, ResultadoPremissa> mapResultFilter;
 
 	public Resultado() {
 		setSaidasObtidas(new ArrayList<>());
@@ -68,11 +68,11 @@ public class Resultado {
 		this.mapResultTest = mapResultTest;
 	}
 
-	public Map<Filtro, ResultadoFiltro> getMapResultFilter() {
+	public Map<Premissa, ResultadoPremissa> getMapResultFilter() {
 		return mapResultFilter;
 	}
 
-	public void setMapResultFilter(Map<Filtro, ResultadoFiltro> mapResultFilter) {
+	public void setMapResultFilter(Map<Premissa, ResultadoPremissa> mapResultFilter) {
 		this.mapResultFilter = mapResultFilter;
 	}
 	

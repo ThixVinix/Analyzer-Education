@@ -1,5 +1,7 @@
 package br.ucsal.bes.tcc.analyzereducation.controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -17,14 +19,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import br.ucsal.bes.tcc.analyzereducation.analyzer.JavaCode;
 import br.ucsal.bes.tcc.analyzereducation.dto.CodeEditorDTO;
 import br.ucsal.bes.tcc.analyzereducation.model.Autor;
-import br.ucsal.bes.tcc.analyzereducation.model.Filtro;
+import br.ucsal.bes.tcc.analyzereducation.model.Premissa;
 import br.ucsal.bes.tcc.analyzereducation.model.Resultado;
-import br.ucsal.bes.tcc.analyzereducation.model.ResultadoFiltro;
+import br.ucsal.bes.tcc.analyzereducation.model.ResultadoPremissa;
 import br.ucsal.bes.tcc.analyzereducation.model.ResultadoTeste;
-import br.ucsal.bes.tcc.analyzereducation.model.Tarefa;
 import br.ucsal.bes.tcc.analyzereducation.model.Teste;
 import br.ucsal.bes.tcc.analyzereducation.repository.CodeEditorRepository;
-import br.ucsal.bes.tcc.analyzereducation.util.BancoDeDados;
+import br.ucsal.bes.tcc.analyzereducation.repository.PremissaRepository;
+import br.ucsal.bes.tcc.analyzereducation.repository.TarefaRepository;
+import br.ucsal.bes.tcc.analyzereducation.repository.TesteRepository;
 import br.ucsal.bes.tcc.analyzereducation.util.Constante;
 
 @Controller
@@ -36,18 +39,45 @@ public class UserEditorController {
 	@Autowired
 	private CodeEditorRepository codeEditorRepository;
 
+	@Autowired
+	private TarefaRepository tarefaRepository;
+
+	@Autowired
+	private TesteRepository testeRepository;
+
+	@Autowired
+	private PremissaRepository premissaRepository;
+
 	@GetMapping("usereditor")
 	public String usereditor(CodeEditorDTO codeEditorDto, @RequestParam("tarefaId") Optional<Long> tarefaId) {
 
+//			var tarefa = BancoDeDados.obterTarefa(tarefaId.get());
 		if (tarefaId.isPresent()) {
-			System.out.println(tarefaId.get());
-			Tarefa tarefa = BancoDeDados.obterTarefa(tarefaId.get());
-			codeEditorDto.setId(tarefa.getId());
-			codeEditorDto.setTestes(tarefa.getTestes());
-			codeEditorDto.setTitulo(tarefa.getTitulo());
-			codeEditorDto.setDescricao(tarefa.getDescricao());
-			if (!tarefa.getFiltros().isEmpty()) {
-					codeEditorDto.setFiltros(tarefa.getFiltros());
+
+			var tarefa = tarefaRepository.findById(tarefaId.get());
+
+			if (tarefa.isEmpty())
+				return "redirect:home/tarefas";
+
+			var testes = testeRepository.findByTarefa(tarefa.get());
+			var premissas = premissaRepository.findByTarefa(tarefa.get());
+
+			codeEditorDto.setId(tarefa.get().getId());
+			codeEditorDto.setTitulo(tarefa.get().getTitulo());
+			codeEditorDto.setDescricao(tarefa.get().getDescricao());
+
+			if (!testes.isEmpty()) {
+				tarefa.get().setTestes(new ArrayList<>());
+				tarefa.get().getTestes().addAll(testes);
+				codeEditorDto.setTestes(tarefa.get().getTestes());
+			} else {
+				codeEditorDto.setTestes(null);
+			}
+
+			if (!premissas.isEmpty()) {
+				tarefa.get().setFiltros(new ArrayList<>());
+				tarefa.get().getFiltros().addAll(premissas);
+				codeEditorDto.setFiltros(tarefa.get().getFiltros());
 			} else {
 				codeEditorDto.setFiltros(null);
 			}
@@ -59,51 +89,68 @@ public class UserEditorController {
 	@PostMapping("novo")
 	public String novo(@Valid CodeEditorDTO codeEditorDto, BindingResult result, RedirectAttributes attributes) {
 
-		Tarefa tarefa = BancoDeDados.obterTarefa(codeEditorDto.getId());
+//		var tarefa = BancoDeDados.obterTarefa(codeEditorDto.getId());
+
+		var tarefa = tarefaRepository.findById(codeEditorDto.getId());
+
+		if (tarefa.isEmpty()) {
+			return "redirect:home/tarefas";
+		}
 
 		if (result.hasErrors()) {
 			attributes.addFlashAttribute("mensagem",
 					"Preencha o campo do editor de código-fonte para poder executá-lo.");
-			return "redirect:/home/usereditor?tarefaId=" + tarefa.getId();
+			return "redirect:/home/usereditor?tarefaId=" + tarefa.get().getId();
 		}
 
-		JavaCode javaCode = new JavaCode();
+		var javaCode = new JavaCode();
 		Resultado resultado;
 
-		resultado = javaCode.executarCodigo(codeEditorDto.getEntrada(), tarefa);
+		var testes = testeRepository.findByTarefa(tarefa.get());
+		var premissas = premissaRepository.findByTarefa(tarefa.get());
+		tarefa.get().setTestes(new ArrayList<>());
+		tarefa.get().setFiltros(new ArrayList<>());
+
+		if (!testes.isEmpty())
+			tarefa.get().getTestes().addAll(testes);
+
+		if (!premissas.isEmpty())
+			tarefa.get().getFiltros().addAll(premissas);
+
+		resultado = javaCode.executarCodigo(codeEditorDto.getEntrada(), tarefa.get());
 
 		StringBuilder sb = preencherConsole(codeEditorDto, resultado);
 
 		preencherInformacoesAdicionais(codeEditorDto, resultado);
-		
+
 		preencherResultadosFiltros(codeEditorDto, resultado);
 
 		preencherResultadosTestes(codeEditorDto, resultado);
 
-		codeEditorDto.setId(tarefa.getId());
-		codeEditorDto.setTestes(tarefa.getTestes());
-		codeEditorDto.setTitulo(tarefa.getTitulo());
-		codeEditorDto.setDescricao(tarefa.getDescricao());
-		codeEditorDto.setFiltros(tarefa.getFiltros());
+		codeEditorDto.setId(tarefa.get().getId());
+		codeEditorDto.setTestes(tarefa.get().getTestes());
+		codeEditorDto.setTitulo(tarefa.get().getTitulo());
+		codeEditorDto.setDescricao(tarefa.get().getDescricao());
+		codeEditorDto.setFiltros(tarefa.get().getFiltros());
 		codeEditorDto.setSaida(sb.toString());
 
 		System.out.println(codeEditorDto.getSaida());
 
 		// CodeEditor codeEditor = codeEditorDto.toCodeEditor();
-//		codeEditorRepository.save(codeEditor);
+		// codeEditorRepository.save(codeEditor);
 
 		return "home/usereditor";
 	}
 
 	private StringBuilder preencherConsole(CodeEditorDTO codeEditorDto, Resultado resultado) {
-		StringBuilder sb = new StringBuilder();
+		var sb = new StringBuilder();
 
 		if (resultado.getSaidasObtidas() != null && resultado.getSaidasObtidas().size() == 1) {
 			sb.append(resultado.getSaidasObtidas().get(0));
-		
+
 		} else {
-			int j = 1;
-			for (int i = 0; i < resultado.getSaidasObtidas().size(); i++) {
+			var j = 1;
+			for (var i = 0; i < resultado.getSaidasObtidas().size(); i++) {
 				String str = "--------------------------------------------------------------------[Resultado da execução #"
 						+ j + "]--------------------------------------------------------------------";
 				String saida = resultado.getSaidasObtidas().get(i);
@@ -124,11 +171,11 @@ public class UserEditorController {
 			codeEditorDto.setArquivoMetrica(null);
 		}
 	}
-	
+
 	private void preencherResultadosFiltros(CodeEditorDTO codeEditorDto, Resultado resultado) {
 		double totalFiltros = 0;
 		double qtdFiltrosUtilizadosCorretamente = 0;
-		for (Map.Entry<Filtro, ResultadoFiltro> rFilter : resultado.getMapResultFilter().entrySet()) {
+		for (Map.Entry<Premissa, ResultadoPremissa> rFilter : resultado.getMapResultFilter().entrySet()) {
 			codeEditorDto.getMapResultFilter().put(rFilter.getKey(), rFilter.getValue());
 			boolean isCorrect = rFilter.getValue().getUsedCorrectly();
 			if (isCorrect) {
@@ -174,5 +221,6 @@ public class UserEditorController {
 	public void setAutor(Autor autor) {
 		this.autor = autor;
 	}
+
 
 }

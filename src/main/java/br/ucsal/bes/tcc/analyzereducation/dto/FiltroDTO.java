@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.ucsal.bes.tcc.analyzereducation.enums.IntervaloFiltroEnum;
-import br.ucsal.bes.tcc.analyzereducation.model.Filtro;
+import br.ucsal.bes.tcc.analyzereducation.model.Premissa;
 
 public class FiltroDTO {
 
@@ -16,7 +16,7 @@ public class FiltroDTO {
 
 	private IntervaloFiltroEnum intervalo;
 	
-	private List<Filtro> premissas;
+	private List<Premissa> premissas;
 	
 	private Long codgTarefa;
 	
@@ -56,11 +56,11 @@ public class FiltroDTO {
 		this.codgTarefa = codgTarefa;
 	}
 
-	public List<Filtro> getPremissas() {
+	public List<Premissa> getPremissas() {
 		return premissas;
 	}
 
-	public void setPremissas(List<Filtro> premissas) {
+	public void setPremissas(List<Premissa> premissas) {
 		this.premissas = premissas;
 	}
 

@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,13 +14,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import br.ucsal.bes.tcc.analyzereducation.dto.FiltroDTO;
-import br.ucsal.bes.tcc.analyzereducation.model.Filtro;
+import br.ucsal.bes.tcc.analyzereducation.model.Premissa;
 import br.ucsal.bes.tcc.analyzereducation.model.Tarefa;
-import br.ucsal.bes.tcc.analyzereducation.util.BancoDeDados;
+import br.ucsal.bes.tcc.analyzereducation.repository.PremissaRepository;
+import br.ucsal.bes.tcc.analyzereducation.repository.TarefaRepository;
 
 @Controller
 @RequestMapping("home")
 public class CriarFiltroController {
+
+	@Autowired
+	private TarefaRepository tarefaRepository;
+
+	@Autowired
+	private PremissaRepository premissaRepository;
 
 	@GetMapping("criarPremissa")
 	public String criarFiltro(FiltroDTO filtroDto, @RequestParam("tarefaId") Optional<Long> tarefaId) {
@@ -27,16 +35,14 @@ public class CriarFiltroController {
 		if (tarefaId.isEmpty())
 			return "redirect:/home/tarefas";
 
-		var tarefas = BancoDeDados.obterTarefas();
+		var tarefa = tarefaRepository.findById(tarefaId.get());
 
-		for (Tarefa tarefa : tarefas) {
-			if (tarefa.getId().equals(tarefaId.get())) {
-				filtroDto.setCodgTarefa(tarefaId.get());
-				return "home/criarPremissa";
-			}
-		}
+		if (tarefa.isEmpty())
+			return "redirect:/home/tarefas";
 
-		return "redirect:/home/tarefas";
+		filtroDto.setCodgTarefa(tarefa.get().getId());
+
+		return "home/criarPremissa";
 	}
 
 	@PostMapping("novaPremissa")
@@ -45,46 +51,33 @@ public class CriarFiltroController {
 		if (filtroDto.getCodgTarefa() == null)
 			return "redirect:/home/tarefas";
 
-		var tarefas = BancoDeDados.obterTarefas();
-		var existTask = false;
+		Optional<Tarefa> tarefa = tarefaRepository.findById(filtroDto.getCodgTarefa());
 
-		for (Tarefa tarefa : tarefas) {
-			if (tarefa.getId().equals(filtroDto.getCodgTarefa())) {
-				existTask = true;
-				break;
-			}
-		}
-
-		if (!existTask)
+		if (tarefa.isEmpty())
 			return "redirect:/home/tarefas";
 
 		if (result.hasErrors())
 			return "redirect:/home/criarPremissa?tarefaId=" + filtroDto.getCodgTarefa();
 
-		var premissa = preencherPremissa(filtroDto);
+		var premissa = preencherPremissa(filtroDto, tarefa);
 
-		BancoDeDados.adicionarFiltro(premissa);
+		premissaRepository.save(premissa);
 
-		var tarefa = BancoDeDados.obterTarefa(filtroDto.getCodgTarefa());
-		tarefa.getFiltros().add(premissa);
-
-		return "redirect:/home/tarefas";
+		return "redirect:/home/premissas?tarefaId=" + filtroDto.getCodgTarefa();
+//		return "redirect:/home/tarefas";
 	}
 
-	private Filtro preencherPremissa(FiltroDTO filtroDto) {
-		var premissas = BancoDeDados.obterFiltros();
+	private Premissa preencherPremissa(FiltroDTO filtroDto, Optional<Tarefa> tarefa) {
 
-		Long id = 0L;
-		for (var i = 0; i < premissas.size(); i++) {
-			if (premissas.get(i).getId() > id) {
-				id = premissas.get(i).getId();
-			}
-		}
-		var premissa = new Filtro();
-		premissa.setId(++id);
+		var premissa = new Premissa();
+
 		premissa.setNomeFiltro(filtroDto.getTitulo());
 		premissa.setIntervalo(filtroDto.getIntervalo());
 		premissa.setQtdDemandada(filtroDto.getQtdDemandada());
+		
+		if (tarefa.isPresent()) {
+			premissa.setTarefa(tarefa.get());
+		}
 
 		return premissa;
 	}

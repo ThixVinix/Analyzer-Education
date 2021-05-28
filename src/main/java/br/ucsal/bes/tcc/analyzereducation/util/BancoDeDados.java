@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import br.ucsal.bes.tcc.analyzereducation.enums.IntervaloFiltroEnum;
-import br.ucsal.bes.tcc.analyzereducation.model.Filtro;
+import br.ucsal.bes.tcc.analyzereducation.model.Premissa;
 import br.ucsal.bes.tcc.analyzereducation.model.Tarefa;
 import br.ucsal.bes.tcc.analyzereducation.model.Teste;
 
@@ -15,7 +15,7 @@ public class BancoDeDados {
 
 	private static List<Teste> testes = new ArrayList<>();
 
-	private static List<Filtro> filtros = new ArrayList<>();
+	private static List<Premissa> filtros = new ArrayList<>();
 
 	static {
 		Tarefa tarefa1 = new Tarefa();
@@ -47,27 +47,27 @@ public class BancoDeDados {
 		tarefa1.getTestes().add(teste2);
 		tarefa1.getTestes().add(teste3);
 		tarefa1.getTestes().add(teste4);
-		Filtro filtro1 = new Filtro();
+		Premissa filtro1 = new Premissa();
 		filtro1.setId(1L);
 		filtro1.setNomeFiltro("Scanner");
 		filtro1.setQtdDemandada(1);
 		filtro1.setIntervalo(IntervaloFiltroEnum.IGUAL);
-		Filtro filtro2 = new Filtro();
+		Premissa filtro2 = new Premissa();
 		filtro2.setId(2L);
 		filtro2.setNomeFiltro("System.out.println");
 		filtro2.setQtdDemandada(1);
 		filtro2.setIntervalo(IntervaloFiltroEnum.MAIOR_IGUAL);
-		Filtro filtro3 = new Filtro();
+		Premissa filtro3 = new Premissa();
 		filtro3.setId(3L);
 		filtro3.setNomeFiltro("try");
 		filtro3.setQtdDemandada(1);
 		filtro3.setIntervalo(IntervaloFiltroEnum.IGUAL);
-		Filtro filtro4 = new Filtro();
+		Premissa filtro4 = new Premissa();
 		filtro4.setId(4L);
 		filtro4.setNomeFiltro("catch");
 		filtro4.setQtdDemandada(1);
 		filtro4.setIntervalo(IntervaloFiltroEnum.IGUAL);
-		Filtro filtro5 = new Filtro();
+		Premissa filtro5 = new Premissa();
 		filtro5.setId(5L);
 		filtro5.setNomeFiltro("public static void main(String[] args) {");
 		filtro5.setQtdDemandada(1);
@@ -169,21 +169,21 @@ public class BancoDeDados {
 		}
 	}
 
-	public static List<Filtro> obterFiltros() {
+	public static List<Premissa> obterFiltros() {
 		return filtros;
 	}
 
-	public static Filtro obterFiltro(Long id) {
+	public static Premissa obterFiltro(Long id) {
 
 		return filtros.get(id.intValue());
 
 	}
 	
-	public static void adicionarFiltro(Filtro filtro) {
+	public static void adicionarFiltro(Premissa filtro) {
 		filtros.add(filtro);
 	}
 	
-	public static void alterarFiltro(Filtro filtro) {
+	public static void alterarFiltro(Premissa filtro) {
 		for (var i = 0; i < filtros.size(); i++) {
 			if (filtros.get(i).getId().equals(filtro.getId())) {
 				filtros.get(i).setNomeFiltro(filtro.getNomeFiltro());
@@ -195,7 +195,7 @@ public class BancoDeDados {
 	}
 
 	public static void deletarFiltro(Long id) {
-		for (Filtro filtro : filtros) {
+		for (Premissa filtro : filtros) {
 			if (filtro.getId().equals(id)) {
 				filtros.remove(filtro);
 				break;

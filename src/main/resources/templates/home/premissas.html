@@ -119,8 +119,8 @@
 												th:text="' ' + Editar"></button>
 									</a> <a th:href="@{/home/premissas/excluir/{id}(id=${premissa.id})}">
 											<button type="button"
-												class="btn btn-danger btn-sm bi bi-trash2"
-												th:text="' ' + Deletar"></button>
+												class="btn btn-danger btn-sm bi bi-trash"
+												th:text="' ' + Excluir"></button>
 									</a></td>
 							</tr>
 						</tbody>
@@ -130,11 +130,11 @@
 
 						<div class="d-grid gap-2 d-md-flex justify-content-md-center">
 							<a th:href="@{/home/tarefas}">
-								<button class="btn btn-secondary bg-gradient me-md-2"
-									type="button">Voltar</button>
+								<button class="btn btn-secondary bg-gradient me-md-2 bi bi-arrow-left-short"
+									type="button"> Voltar</button>
 							</a>
 							<a th:href="@{/home/criarPremissa(tarefaId=${filtroDTO.codgTarefa})}">
-							<button class="btn btn-success bg-gradient" >Criar nova premissa</button>
+							<button class="btn btn-success bg-gradient bi bi-file-earmark-ppt" > Criar nova premissa</button>
 							</a>
 						</div>
 

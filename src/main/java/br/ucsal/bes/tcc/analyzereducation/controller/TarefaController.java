@@ -1,9 +1,11 @@
 package br.ucsal.bes.tcc.analyzereducation.controller;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,21 +13,37 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import br.ucsal.bes.tcc.analyzereducation.dto.TarefaDTO;
 import br.ucsal.bes.tcc.analyzereducation.model.Tarefa;
-import br.ucsal.bes.tcc.analyzereducation.util.BancoDeDados;
+import br.ucsal.bes.tcc.analyzereducation.repository.PremissaRepository;
+import br.ucsal.bes.tcc.analyzereducation.repository.TarefaRepository;
+import br.ucsal.bes.tcc.analyzereducation.repository.TesteRepository;
 
 @Controller
 @RequestMapping("home")
 public class TarefaController {
 
+	@Autowired
+	private TarefaRepository tarefaRepository;
+
+	@Autowired
+	private TesteRepository testeRepository;
+
+	@Autowired
+	private PremissaRepository premissaRepository;
+
 	@GetMapping("/tarefas")
 	public String tarefas(TarefaDTO tarefaDto) {
 
-		tarefaDto.getTarefas().addAll(BancoDeDados.obterTarefas());
+		List<Tarefa> tarefas = tarefaRepository.findAll();
+
+		if (tarefas.isEmpty()) {
+			return "home/tarefas";
+		} else {
+			tarefaDto.getTarefas().addAll(tarefaRepository.findAll());
+		}
 
 		return "home/tarefas";
 	}
@@ -35,81 +53,53 @@ public class TarefaController {
 
 		if (tarefaId.isEmpty())
 			return "redirect:/home/tarefas";
-		
-		var tarefas = BancoDeDados.obterTarefas();
 
-		for (Tarefa tarefa : tarefas) {
-			if (tarefa.getId().equals(tarefaId.get())) {
-				tarefaDto.setId(tarefa.getId());
-				tarefaDto.setTitulo(tarefa.getTitulo());
-				tarefaDto.setDescricao(tarefa.getDescricao());
-				return "home/tarefas/editarTarefa";
-			}
-		}
-		
+		var tarefa = tarefaRepository.findById(tarefaId.get());
+
+		if (tarefa.isEmpty())
 			return "redirect:/home/tarefas";
+
+		tarefaDto.setId(tarefa.get().getId());
+		tarefaDto.setTitulo(tarefa.get().getTitulo());
+		tarefaDto.setDescricao(tarefa.get().getDescricao());
+
+		return "home/tarefas/editarTarefa";
 	}
 
 	@PostMapping("tarefas/editado")
 	public String editado(@Valid TarefaDTO tarefaDto, BindingResult result, RedirectAttributes attributes) {
 
-		
 		if (tarefaDto.getId() == null)
 			return "redirect:/home/tarefas";
 
-		var tarefas = BancoDeDados.obterTarefas();
-		var existTask = false;
+		var tarefa = tarefaRepository.findById(tarefaDto.getId());
 
-		for (Tarefa tarefa : tarefas) {
-			if (tarefa.getId().equals(tarefaDto.getId())) {
-				existTask = true;
-				break;
-			}
-		}
-
-		if (!existTask)
+		if (tarefa.isEmpty())
 			return "redirect:/home/tarefas";
 
 		if (result.hasErrors())
 			return "redirect:/home/tarefas/editarTarefa?tarefaId=" + tarefaDto.getId();
-		
-		var tarefa = BancoDeDados.obterTarefa(tarefaDto.getId());
-		
-		tarefa.setId(tarefaDto.getId());
-		tarefa.setTitulo(tarefaDto.getTitulo());
-		tarefa.setDescricao(tarefaDto.getDescricao());
-		
-		BancoDeDados.alterarTarefa(tarefa);
+
+		tarefa.get().setId(tarefaDto.getId());
+		tarefa.get().setTitulo(tarefaDto.getTitulo());
+		tarefa.get().setDescricao(tarefaDto.getDescricao());
+
+		tarefaRepository.save(tarefa.get());
 
 		return "redirect:/home/tarefas";
 	}
 
-//	@GetMapping("/tarefas/editar/{id}")
-//	public ModelAndView editar(@PathVariable("id") Long id, TarefaDTO tarefaDto) {
-//
-//		ModelAndView mv = new ModelAndView();
-//		mv.setViewName("/tarefas/editarTarefa/{id}");
-//		Tarefa tarefa = BancoDeDados.obterTarefa(id);
-//		mv.addObject("tarefa", tarefa);
-//		return mv;
-//	}
-//
-//	@PostMapping("tarefas/editarTarefa/{id}")
-//	public ModelAndView editarTarefa(TarefaDTO tarefaDto) {
-//		ModelAndView mv = new ModelAndView();
-//		Tarefa tarefa = new Tarefa();
-//		tarefa.setId(tarefaDto.getId());
-//		tarefa.setTitulo(tarefaDto.getTitulo());
-//		tarefa.setDescricao(tarefaDto.getDescricao());
-//		BancoDeDados.alterarTarefa(tarefa);
-//		mv.setViewName("redirect:/home/tarefas");
-//		return mv;
-//	}
-
 	@GetMapping("/tarefas/excluir/{id}")
 	public String excluir(@PathVariable("id") Long id, TarefaDTO tarefaDto) {
-		BancoDeDados.deletarTarefa(id);
-		tarefaDto.getTarefas().addAll(BancoDeDados.obterTarefas());
+
+		var tarefa = tarefaRepository.findById(id);
+
+		if (tarefa.isPresent()) {
+			testeRepository.removeByTarefa(tarefa.get());
+			premissaRepository.removeByTarefa(tarefa.get());
+			tarefaRepository.deleteById(id);
+		}
+
 		return "redirect:/home/tarefas";
 	}
 

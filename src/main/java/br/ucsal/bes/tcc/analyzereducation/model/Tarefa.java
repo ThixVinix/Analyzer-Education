@@ -3,14 +3,33 @@ package br.ucsal.bes.tcc.analyzereducation.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "tarefa")
 public class Tarefa {
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
+	@Column(name = "TITULO")
 	private String titulo;
+
+	@Column(name = "DESCRICAO")
 	private String descricao;
+
+	@OneToMany(mappedBy = "tarefa")
 	private List<Teste> testes;
-	private List<Filtro> filtros;
-	private boolean concluido;
+
+	@OneToMany(mappedBy = "tarefa")
+	private List<Premissa> filtros;
 
 	public Tarefa() {
 		this.setTestes(new ArrayList<>());
@@ -41,14 +60,6 @@ public class Tarefa {
 		this.descricao = descricao;
 	}
 
-	public boolean isConcluido() {
-		return concluido;
-	}
-
-	public void setConcluido(boolean concluido) {
-		this.concluido = concluido;
-	}
-
 	public List<Teste> getTestes() {
 		return testes;
 	}
@@ -57,11 +68,11 @@ public class Tarefa {
 		this.testes = testes;
 	}
 
-	public List<Filtro> getFiltros() {
+	public List<Premissa> getFiltros() {
 		return filtros;
 	}
 
-	public void setFiltros(List<Filtro> filtros) {
+	public void setFiltros(List<Premissa> filtros) {
 		this.filtros = filtros;
 	}
 

@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,12 +16,19 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import br.ucsal.bes.tcc.analyzereducation.dto.TesteDTO;
 import br.ucsal.bes.tcc.analyzereducation.model.Tarefa;
 import br.ucsal.bes.tcc.analyzereducation.model.Teste;
-import br.ucsal.bes.tcc.analyzereducation.util.BancoDeDados;
+import br.ucsal.bes.tcc.analyzereducation.repository.TarefaRepository;
+import br.ucsal.bes.tcc.analyzereducation.repository.TesteRepository;
 import br.ucsal.bes.tcc.analyzereducation.util.Util;
 
 @Controller
 @RequestMapping("home")
 public class CriarTesteController {
+
+	@Autowired
+	private TarefaRepository tarefaRepository;
+
+	@Autowired
+	private TesteRepository testeRepository;
 
 	@GetMapping("criarTeste")
 	public String criarTeste(TesteDTO testeDto, @RequestParam("tarefaId") Optional<Long> tarefaId) {
@@ -28,16 +36,14 @@ public class CriarTesteController {
 		if (tarefaId.isEmpty())
 			return "redirect:/home/tarefas";
 
-		var tarefas = BancoDeDados.obterTarefas();
+		var tarefa = tarefaRepository.findById(tarefaId.get());
 
-		for (Tarefa tarefa : tarefas) {
-			if (tarefa.getId().equals(tarefaId.get())) {
-				testeDto.setCodgTarefa(tarefaId.get());
-				return "home/criarTeste";
-			}
-		}
+		if (tarefa.isEmpty())
+			return "redirect:/home/tarefas";
 
-		return "redirect:/home/tarefas";
+		testeDto.setCodgTarefa(tarefa.get().getId());
+
+		return "home/criarTeste";
 	}
 
 	@PostMapping("novoTeste")
@@ -46,47 +52,28 @@ public class CriarTesteController {
 		if (testeDto.getCodgTarefa() == null)
 			return "redirect:/home/tarefas";
 
-		var tarefas = BancoDeDados.obterTarefas();
-		var existTask = false;
+		Optional<Tarefa> tarefa = tarefaRepository.findById(testeDto.getCodgTarefa());
 
-		for (Tarefa tarefa : tarefas) {
-			if (tarefa.getId().equals(testeDto.getCodgTarefa())) {
-				existTask = true;
-				break;
-			}
-		}
-
-		if (!existTask)
+		if (tarefa.isEmpty())
 			return "redirect:/home/tarefas";
 
 		if (result.hasErrors())
 			return "redirect:/home/criarTeste?tarefaId=" + testeDto.getCodgTarefa();
 
-		var teste = preencherTeste(testeDto);
+		var teste = preencherTeste(testeDto, tarefa);
 
-		BancoDeDados.adicionarTeste(teste);
-		
-		var tarefa = BancoDeDados.obterTarefa(testeDto.getCodgTarefa());
-		tarefa.getTestes().add(teste);
-
-		return "redirect:/home/tarefas";
+		testeRepository.save(teste);
+		// home/testes?tarefaId=7
+		return "redirect:/home/testes?tarefaId=" + testeDto.getCodgTarefa();
+//		return "redirect:/home/tarefas";
 	}
 
-	private Teste preencherTeste(TesteDTO testeDto) {
-		var testes = BancoDeDados.obterTestes();
-
-		Long id = 0L;
-		for (var i = 0; i < testes.size(); i++) {
-			if (testes.get(i).getId() > id) {
-				id = testes.get(i).getId();
-			}
-		}
+	private Teste preencherTeste(TesteDTO testeDto, Optional<Tarefa> tarefa) {
 
 		var sbEntradas = Util.removeLeadingAndTrailing(testeDto.getEntradas());
 		var sbSaidas = Util.removeLeadingAndTrailing(testeDto.getSaidas());
 
 		var teste = new Teste();
-		teste.setId(++id);
 		teste.setNome(testeDto.getNome().trim());
 
 		if (sbEntradas.isPresent()) {
@@ -98,7 +85,11 @@ public class CriarTesteController {
 		if (sbSaidas.isPresent()) {
 			teste.setSaidas(sbSaidas.get().toString());
 		}
-		
+
+		if (tarefa.isPresent()) {
+			teste.setTarefa(tarefa.get());
+		}
+
 		return teste;
 	}
 

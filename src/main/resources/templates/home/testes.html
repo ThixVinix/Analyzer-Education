@@ -127,8 +127,8 @@
 											<div class="modal-dialog modal-xl modal-dialog-scrollable">
 												<div class="modal-content bg-dark">
 													<div class="modal-header bg-gradient text-white">
-														<h5 class="modal-title" id="staticBackdropLabel"
-															th:text="'Entrada(s) e Saída(s) do Teste - ' + ${teste.nome}"></h5>
+														<h5 class="modal-title bi bi-eye-fill" id="staticBackdropLabel"
+															th:text="' Entrada(s) e Saída(s) do Teste - ' + ${teste.nome}"></h5>
 														<button type="button" class="btn-close bg-light"
 															data-bs-dismiss="modal" aria-label="Close"></button>
 													</div>
@@ -176,8 +176,8 @@
 												th:text="' ' + Editar"></button>
 									</a> <a th:href="@{/home/testes/excluir/{id}(id=${teste.id})}">
 											<button type="button"
-												class="btn btn-danger btn-sm bi bi-trash2"
-												th:text="' ' + Deletar"></button>
+												class="btn btn-danger btn-sm bi bi-trash"
+												th:text="' ' + Excluir"></button>
 									</a></td>
 
 
@@ -194,7 +194,7 @@
 							<button class="btn btn-secondary bg-gradient me-md-2 bi bi-arrow-left-short"
 								type="button"> Voltar</button>
 						</a> <a th:href="@{/home/criarTeste(tarefaId=${testeDTO.codgTarefa})}">
-							<button class="btn btn-success bg-gradient bi bi-file-earmark-check"> Adicionar Teste</button>
+							<button class="btn btn-success bg-gradient bi bi-file-earmark-font"> Adicionar Teste</button>
 						</a>
 					</div>
 

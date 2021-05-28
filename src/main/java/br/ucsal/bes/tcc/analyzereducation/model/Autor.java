@@ -16,9 +16,9 @@ public class Autor {
 			int totalTarefas = atividade.getTarefas().size();
 			int qtdTarefasConcluidas = 0;
 			for (int i = 0; i < totalTarefas; i++) {
-				if (atividade.getTarefas().get(i).isConcluido()) {
-					qtdTarefasConcluidas++;
-				}
+//				if (atividade.getTarefas().get(i).isConcluido()) {
+//					qtdTarefasConcluidas++;
+//				}
 			}
 
 			if (qtdTarefasConcluidas == totalTarefas) {

@@ -43,6 +43,13 @@
 							<li><a class="dropdown-item" th:href="@{/home/testes}">Testes</a></li>
 							<li><a class="dropdown-item" th:href="@{/home/filtros}">Filtros</a></li>
 						</ul></li>
+						<li class="nav-item" >
+					  	<a class="text-light" sec:authorize="!isAuthenticated()" th:href="@{/login}"> login</a>
+						<a onclick="document.querySelector('#form-login').submit()" class="text-light" sec:authorize="isAuthenticated()" th:href="@{#}"> logout</a>
+						<form id="form-login" th:action="@{/logout}" method="post"></form>
+						</li>  
+						
+						
 				</ul>
 			</div>
 		</div>

@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,20 +17,19 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import br.ucsal.bes.tcc.analyzereducation.dto.TesteDTO;
 import br.ucsal.bes.tcc.analyzereducation.model.Tarefa;
 import br.ucsal.bes.tcc.analyzereducation.model.Teste;
-import br.ucsal.bes.tcc.analyzereducation.util.BancoDeDados;
+import br.ucsal.bes.tcc.analyzereducation.repository.TarefaRepository;
+import br.ucsal.bes.tcc.analyzereducation.repository.TesteRepository;
 import br.ucsal.bes.tcc.analyzereducation.util.Util;
 
 @Controller
 @RequestMapping("home")
 public class TesteController {
 
-//	@GetMapping("testes")
-//	public String testes1(Model model) {
-//
-//		model.addAttribute("testes", BancoDeDados.obterTestes());
-//		return "home/testes";
-//
-//	}
+	@Autowired
+	private TarefaRepository tarefaRepository;
+
+	@Autowired
+	private TesteRepository testeRepository;
 
 	@GetMapping("testes")
 	public String testes(TesteDTO testeDto, @RequestParam("tarefaId") Optional<Long> tarefaId) {
@@ -37,23 +37,16 @@ public class TesteController {
 		if (tarefaId.isEmpty())
 			return "redirect:/home/tarefas";
 
-		var tarefas = BancoDeDados.obterTarefas();
-		var existTask = false;
+		var tarefa = tarefaRepository.findById(tarefaId.get());
 
-		for (Tarefa tarefa : tarefas) {
-			if (tarefa.getId().equals(tarefaId.get())) {
-				existTask = true;
-				break;
-			}
-		}
-
-		if (!existTask)
+		if (tarefa.isEmpty())
 			return "redirect:/home/tarefas";
 
-		var tarefa = BancoDeDados.obterTarefa(tarefaId.get());
+		testeDto.setCodgTarefa(tarefa.get().getId());
 
-		testeDto.setCodgTarefa(tarefa.getId());
-		testeDto.getTestes().addAll(tarefa.getTestes());
+		var testes = testeRepository.findByTarefa(tarefa.get());
+
+		testeDto.getTestes().addAll(testes);
 
 		return "home/testes";
 	}
@@ -64,52 +57,58 @@ public class TesteController {
 		if (testeId.isEmpty())
 			return "redirect:/home/tarefas";
 
-		var testes = BancoDeDados.obterTestes();
+		var teste = testeRepository.findById(testeId.get());
 
-		for (Teste teste : testes) {
-			if (teste.getId().equals(testeId.get())) {
-				testeDto.setId(teste.getId());
-				testeDto.setNome(teste.getNome());
-				testeDto.setEntradas(teste.getEntradas());
-				testeDto.setSaidas(teste.getSaidas());
-				return "home/testes/editarTeste";
-			}
-		}
+		if (teste.isEmpty())
+			return "redirect:/home/tarefas";
 
-		return "redirect:/home/tarefas";
+		if (teste.get().getTarefa().getId() == null)
+			return "redirect:/home/tarefas";
+
+		var tarefa = tarefaRepository.findById(teste.get().getTarefa().getId());
+
+		if (tarefa.isEmpty())
+			return "redirect:/home/tarefas";
+
+		testeDto.setId(teste.get().getId());
+		testeDto.setNome(teste.get().getNome());
+		testeDto.setEntradas(teste.get().getEntradas());
+		testeDto.setSaidas(teste.get().getSaidas());
+		testeDto.setCodgTarefa(teste.get().getTarefa().getId());
+
+		return "home/testes/editarTeste";
 	}
 
 	@PostMapping("testes/editado")
 	public String editado(@Valid TesteDTO testeDto, BindingResult result, RedirectAttributes attributes) {
 
-//		if (testeDto.getId() == null)
-//			return "redirect:/home/testes?tarefaId=" + testeDto.getCodgTarefa();
+		if (testeDto.getId() == null)
+			return "redirect:/home/tarefas";
 
-		var tarefas = BancoDeDados.obterTarefas();
-		var existTask = false;
+		var teste = testeRepository.findById(testeDto.getId());
 
-		for (Tarefa tarefa : tarefas) {
-			if (tarefa.getId().equals(testeDto.getId())) {
-				existTask = true;
-				break;
-			}
-		}
+		if (teste.isEmpty())
+			return "redirect:/home/tarefas";
 
-//		if (!existTask)
-//			return "redirect:/home/testes?tarefaId=" + testeDto.getCodgTarefa();
+		if (teste.get().getTarefa().getId() == null)
+			return "redirect:/home/tarefas";
+
+		var tarefa = tarefaRepository.findById(teste.get().getTarefa().getId());
+
+		if (tarefa.isEmpty())
+			return "redirect:/home/tarefas";
 
 		if (result.hasErrors())
 			return "redirect:/home/testes/editarTeste?testeId=" + testeDto.getId();
 
-		var teste = preencherTeste(testeDto);
+		var testeEditado = preencherTeste(testeDto, tarefa);
 
-		BancoDeDados.alterarTeste(teste);
+		testeRepository.save(testeEditado);
 
-//		return "redirect:/home/testes?tarefaId=" + testeDto.getCodgTarefa();
-		return "redirect:/home/tarefas";
+		return "redirect:/home/testes?tarefaId=" + testeDto.getCodgTarefa();
 	}
 
-	private Teste preencherTeste(TesteDTO testeDto) {
+	private Teste preencherTeste(TesteDTO testeDto, Optional<Tarefa> tarefa) {
 		var sbEntradas = Util.removeLeadingAndTrailing(testeDto.getEntradas());
 		var sbSaidas = Util.removeLeadingAndTrailing(testeDto.getSaidas());
 
@@ -125,6 +124,12 @@ public class TesteController {
 
 		if (sbSaidas.isPresent()) {
 			teste.setSaidas(sbSaidas.get().toString());
+		} else {
+			teste.setSaidas(null);
+		}
+		
+		if (tarefa.isPresent()) {
+			teste.setTarefa(tarefa.get());
 		}
 
 		return teste;
@@ -133,29 +138,14 @@ public class TesteController {
 	@GetMapping("/testes/excluir/{id}")
 	public String excluir(@PathVariable("id") Long id, TesteDTO testeDto) {
 
-		var tarefas = BancoDeDados.obterTarefas();
-		var testes = BancoDeDados.obterTestes();
+		var teste = testeRepository.findById(id);
 
-		var found = false;
-
-		for (var i = 0; i < tarefas.size(); i++) {
-
-			if (found)
-				break;
-
-			for (var j = 0; j < testes.size(); j++) {
-				if (tarefas.get(i).getTestes().get(j).getId().equals(id)) {
-					var teste = BancoDeDados.obterTeste(id);
-					tarefas.get(i).getTestes().remove(teste);
-					BancoDeDados.deletarTeste(id);
-					found = true;
-					break;
-				}
-			}
-
+		if (teste.isPresent()) {
+			var codgTarefa = teste.get().getTarefa().getId();
+			testeRepository.delete(teste.get());
+			return "redirect:/home/testes?tarefaId=" + codgTarefa;
 		}
 
-		// tarefaDto.getTarefas().addAll(BancoDeDados.obterTarefas());
 		return "redirect:/home/tarefas";
 	}
 

@@ -16,8 +16,8 @@ import org.apache.logging.log4j.Logger;
 
 import br.ucsal.bes.tcc.analyzereducation.model.ArquivoMetrica;
 import br.ucsal.bes.tcc.analyzereducation.model.Auxiliar;
-import br.ucsal.bes.tcc.analyzereducation.model.Filtro;
-import br.ucsal.bes.tcc.analyzereducation.model.ResultadoFiltro;
+import br.ucsal.bes.tcc.analyzereducation.model.Premissa;
+import br.ucsal.bes.tcc.analyzereducation.model.ResultadoPremissa;
 import br.ucsal.bes.tcc.analyzereducation.util.Constante;
 import br.ucsal.bes.tcc.analyzereducation.util.Util;
 
@@ -306,7 +306,7 @@ public abstract class AbstractArquivoMetrica {
 		return contGod;
 	}
 
-	public ResultadoFiltro verificarUtilizacaoFiltro(Filtro filtro) {
+	public ResultadoPremissa verificarUtilizacaoFiltro(Premissa filtro) {
 
 		var conteudoString = conteudoCompactado.toString();
 		var st = new StringTokenizer(conteudoString, Constante.QUEBRA_LINHA);
@@ -391,7 +391,7 @@ public abstract class AbstractArquivoMetrica {
 				isCorrect = true;
 		}
 
-		return new ResultadoFiltro(qtdUtilizada, isCorrect);
+		return new ResultadoPremissa(qtdUtilizada, isCorrect);
 	}
 
 	protected void salvarDiretorioAndArquivo(Path diretorio, File arquivo) {

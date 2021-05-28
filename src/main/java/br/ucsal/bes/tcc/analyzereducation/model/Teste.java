@@ -1,14 +1,34 @@
 package br.ucsal.bes.tcc.analyzereducation.model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "teste")
 public class Teste {
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(name = "NOME_TESTE")
 	private String nome;
 
+	@Column(name = "ENTRADAS")
 	private String entradas;
 
+	@Column(name = "SAIDAS")
 	private String saidas;
+
+	@ManyToOne()
+	@JoinColumn(name = "codg_tarefa")
+	private Tarefa tarefa;
 
 	public Long getId() {
 		return id;
@@ -40,6 +60,14 @@ public class Teste {
 
 	public void setSaidas(String saidas) {
 		this.saidas = saidas;
+	}
+
+	public Tarefa getTarefa() {
+		return tarefa;
+	}
+
+	public void setTarefa(Tarefa tarefa) {
+		this.tarefa = tarefa;
 	}
 
 }

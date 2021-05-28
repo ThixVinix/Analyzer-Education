@@ -10,8 +10,8 @@ import javax.validation.constraints.NotBlank;
 
 import br.ucsal.bes.tcc.analyzereducation.model.ArquivoMetrica;
 import br.ucsal.bes.tcc.analyzereducation.model.CodeEditor;
-import br.ucsal.bes.tcc.analyzereducation.model.Filtro;
-import br.ucsal.bes.tcc.analyzereducation.model.ResultadoFiltro;
+import br.ucsal.bes.tcc.analyzereducation.model.Premissa;
+import br.ucsal.bes.tcc.analyzereducation.model.ResultadoPremissa;
 import br.ucsal.bes.tcc.analyzereducation.model.ResultadoTeste;
 import br.ucsal.bes.tcc.analyzereducation.model.Teste;
 import br.ucsal.bes.tcc.analyzereducation.util.Util;
@@ -43,11 +43,11 @@ public class CodeEditorDTO {
 
 	private List<Teste> testes;
 
-	private List<Filtro> filtros;
+	private List<Premissa> filtros;
 
 	private Map<Teste, ResultadoTeste> mapResultTest;
 	
-	private Map<Filtro, ResultadoFiltro> mapResultFilter;
+	private Map<Premissa, ResultadoPremissa> mapResultFilter;
 
 	private Integer percentualAcerto;
 	
@@ -224,11 +224,11 @@ public class CodeEditorDTO {
 		this.percentualAcerto = percentualAcerto;
 	}
 
-	public List<Filtro> getFiltros() {
+	public List<Premissa> getFiltros() {
 		return filtros;
 	}
 
-	public void setFiltros(List<Filtro> filtros) {
+	public void setFiltros(List<Premissa> filtros) {
 		this.filtros = filtros;
 	}
 
@@ -240,11 +240,11 @@ public class CodeEditorDTO {
 		this.percentualUtilizacoes = percentualUtilizacoes;
 	}
 
-	public Map<Filtro, ResultadoFiltro> getMapResultFilter() {
+	public Map<Premissa, ResultadoPremissa> getMapResultFilter() {
 		return mapResultFilter;
 	}
 
-	public void setMapResultFilter(Map<Filtro, ResultadoFiltro> mapResultFilter) {
+	public void setMapResultFilter(Map<Premissa, ResultadoPremissa> mapResultFilter) {
 		this.mapResultFilter = mapResultFilter;
 	}
 

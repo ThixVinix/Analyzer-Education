@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns:th="http://www.thymeleaf.org">
+<head>
+<link rel="shortcut icon" href="#">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+<meta charset="UTF-8">
+<title>CodeTask</title>
+</head>
+<body style="background-color: rgb(0, 128, 192);">
+
+	<div class="container"
+		style="display: flex; align-items: center; justify-content: center; padding-top: 100px; padding-bottom: 100px">
+
+
+		<div class="card text-white  bg-dark" style="width: 70%">
+			<div class="card-header bg-gradient">
+				<h1 class="display-1 fst-italic text-warning text-center">CodeTask</h1>
+			</div>
+			<div class="card-body ">
+				<div class="card-text">
+					<div class="container">
+						<form th:action="@{/login}" method="post">
+							<div class="mb-3">
+								<label for="exampleInputEmail1"
+									class="col-form-label fs-4 bi bi-person-fill"> Email
+									address</label> <input type="email" class="form-control"
+									placeholder="name@example.com" id="exampleInputEmail1"
+									aria-describedby="emailHelp" name="username">
+								<div id="emailHelp" class="form-text">We'll never share
+									your email with anyone else.</div>
+							</div>
+							<div class="mb-3">
+								<label for="exampleInputPassword1" class="col-form-label fs-4">Password</label>
+								<input type="password" class="form-control"
+									id="exampleInputPassword1" name="password">
+							</div>
+							<div class="d-grid gap-2 d-md-flex justify-content-md-center"
+								style="margin-top: 50px">
+								<button type="submit"
+									class="btn btn-outline-warning bg-gradient  bi bi-box-arrow-in-right">
+									Acessar</button>
+							</div>
+						</form>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+	<nav aria-label="Toggle navigation"
+		class="navbar fixed-bottom navbar-dark bg-dark">
+		<div class="container-fluid"
+			style="align-items: center; justify-content: center;">
+			<a class="nav-link link-warning"
+				href="https://github.com/thixvinix/codeTask">Github</a>
+		</div>
+	</nav>
+
+
+	<script type="text/javascript">
+		function checarEmail() {
+			if (document.forms[0].email.value == ""
+					|| document.forms[0].email.value.indexOf('@') == -1
+					|| document.forms[0].email.value.indexOf('.') == -1) {
+				alert("Por favor, informe um E-MAIL válido!");
+				return false;
+			}
+		}
+	</script>
+
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+		crossorigin="anonymous"></script>
+
+</body>
+</html>
