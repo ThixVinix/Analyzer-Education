@@ -15,9 +15,13 @@
 <meta charset="UTF-8">
 <title>CodeTask</title>
 <style type="text/css" media="screen">
+body{
+background: rgb(208,236,234);
+background: linear-gradient(90deg, rgba(208,236,234,1) 0%, rgba(105,186,203,1) 10%, rgba(104,138,205,1) 20%, rgba(104,138,205,1) 80%, rgba(105,186,203,1) 90%, rgba(208,236,234,1) 100%);
+}
 </style>
 </head>
-<body style="background-color: rgb(0, 128, 192);">
+<body>
 
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark"
 		aria-label="Toggle navigation">
@@ -131,11 +135,64 @@
 												<button type="button"
 													class="btn btn-warning btn-sm bi bi-pencil"
 													th:text="' ' + Editar"></button>
-										</a> <a th:href="@{/home/tarefas/excluir/{id}(id=${tarefa.id})}">
-												<button type="button"
-													class="btn btn-danger btn-sm bi bi-trash"
-													th:text="' ' + Excluir"></button>
-										</a> <a th:href="@{/home/usereditor(tarefaId=${tarefa.id})}"><button
+
+										</a>
+											<button type="button" data-bs-toggle="modal"
+												th:attr="data-bs-target='#staticBackdrop' + ${tarefa.id}"
+												data-bs-target="#staticBackdrop"
+												class="btn btn-danger btn-sm bi bi-trash"
+												th:text="' ' + Excluir"></button> 
+												
+												<!-- Modal -->
+											<div class="modal fade" id="staticBackdrop"
+												th:id="'staticBackdrop' + ${tarefa.id}"
+												data-bs-backdrop="static" data-bs-keyboard="false"
+												tabindex="-1" aria-labelledby="staticBackdropLabel"
+												aria-hidden="true">
+												<div class="modal-dialog modal-dialog-centered">
+													<div class="modal-content">
+														<div class="modal-header bg-dark bg-gradient text-light">
+															<h5 class="modal-title bi bi-exclamation-triangle-fill"
+																id="staticBackdropLabel"> Atenção</h5>
+															<button type="button" class="btn-close bg-light"
+																data-bs-dismiss="modal" aria-label="Close"></button>
+														</div>
+														<div class="modal-body bg-dark text-light text-center">
+															<p class="fs-5">Tem certeza que deseja excluir a
+																tarefa?</p>
+
+															<ul class="list-group">
+																<li
+																	class="list-group-item list-group-item-danger text-start">
+																	<span class="fw-bolder">Código:</span> <span
+																	class="fst-italic" th:text="${tarefa.id}"></span>
+																</li>
+																<li
+																	class="list-group-item list-group-item-danger text-start">
+																	<span class="fw-bolder">Título:</span> <span
+																	class="fst-italic" th:text="${tarefa.titulo}"></span>
+																</li>
+
+															</ul>
+															<br>
+															<p class="fs-5">Caso seja excluída, <span class="fw-bolder text-danger">todos</span> os testes
+																e/ou premissas vinculados na tarefa também serão
+																excluídos.</p>
+														</div>
+														<div class="modal-footer bg-dark bg-gradient text-light">
+															<button type="button"
+																class="btn btn-secondary bg-gradient bi bi-x-lg"
+																data-bs-dismiss="modal"> Cancelar</button>
+															<a
+																th:href="@{/home/tarefas/excluir/{id}(id=${tarefa.id})}">
+																<button type="button"
+																	class="btn btn-danger bg-gradient bi bi-check-lg">
+																	 Confirmar Exclusão</button>
+															</a>
+														</div>
+													</div>
+												</div>
+											</div> <a th:href="@{/home/usereditor(tarefaId=${tarefa.id})}"><button
 													class="btn btn-dark btn-sm bi bi-journal-code"
 													th:text="' ' + Iniciar + ' ' + Tarefa"></button></a></td>
 
@@ -164,6 +221,10 @@
 			</div>
 		</div>
 	</div>
+
+
+
+
 
 	<nav aria-label="Toggle navigation"
 		class="navbar fixed-bottom navbar-dark bg-dark">
